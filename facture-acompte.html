@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facture Acompte</title>
+<link rel="icon" type="image/png" sizes="16x16" href="logo_dujardin_fondblanc.png">
+<link rel="icon" type="image/png" sizes="32x32" href="logo_dujardin_fondblanc.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f0f0f0;
+    color: #1a1a1a;
+  }
+
+  /* ════════ FORM ════════ */
+  .form-view {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+
+  .form-header { text-align: center; margin-bottom: 32px; }
+  .form-header .fh-logo { display: inline-block; }
+  .form-header .fh-logo img { max-width: 220px; height: auto; }
+  .form-header .fh-sub { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #1a1a1a; }
+  .form-header h2 { margin-top: 16px; font-size: 20px; font-weight: 700; }
+  .form-header p { font-size: 13px; color: #888; margin-top: 4px; }
+  .home-link {
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-top: 14px; padding: 9px 16px; border-radius: 999px;
+    border: 1px solid #ddd; background: #fff; color: #555;
+    text-decoration: none; font-size: 12px; font-weight: 600;
+  }
+  .home-link:hover { background: #f5f5f5; color: #1a1a1a; }
+
+  .card {
+    background: #fff; border-radius: 8px; padding: 24px;
+    margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .card h3 {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2.5px; color: #C0392B; margin-bottom: 16px;
+    padding-bottom: 8px; border-bottom: 1px solid #f0f0f0;
+  }
+
+  .row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .row > * { flex: 1; }
+
+  label {
+    display: block; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 4px;
+  }
+
+  input, select, textarea {
+	    width: 100%; padding: 9px 12px; border: 1px solid #e0e0e0;
+	    border-radius: 5px; font-family: 'DM Sans', sans-serif;
+	    font-size: 13px; color: #1a1a1a; background: #fafafa;
+	    transition: border-color 0.2s, background-color 0.2s;
+	  }
+	  input::placeholder, textarea::placeholder { color: #d8d8d8; }
+	  input:focus, select:focus, textarea:focus { outline: none; border-color: #C0392B; background: #fff; }
+	  input.invalid { border-color: #C0392B; background: #fff0f0; }
+	  textarea { resize: vertical; min-height: 60px; }
+	  .invoice-number-field {
+	    display: flex; align-items: center; border: 1px solid #e0e0e0;
+	    border-radius: 5px; background: #fafafa; overflow: hidden;
+	  }
+	  .invoice-number-prefix {
+	    padding: 9px 0 9px 12px; font-size: 13px; color: #1a1a1a;
+	    white-space: nowrap;
+	  }
+	  .invoice-number-suffix {
+	    border: none; background: transparent; padding-left: 2px;
+	    text-transform: uppercase; letter-spacing: 0.5px;
+	  }
+	  .invoice-number-field:focus-within {
+	    border-color: #C0392B; background: #fff;
+	  }
+	  .unit-input-field {
+	    display: flex; align-items: center; border: 1px solid #e0e0e0;
+	    border-radius: 5px; background: #fafafa; overflow: hidden;
+	  }
+	  .unit-input {
+	    border: none; background: transparent;
+	  }
+	  .unit-suffix {
+	    padding: 9px 12px 9px 0; font-size: 13px; color: #8f8f8f;
+	    white-space: nowrap;
+	  }
+	  .unit-input-field:focus-within {
+	    border-color: #C0392B; background: #fff;
+	  }
+
+  .immat-input { text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+
+  .lines-area { margin-top: 8px; }
+  .line-row {
+    display: flex; gap: 8px; align-items: flex-end; margin-bottom: 8px;
+    padding: 10px 12px; background: #fafafa; border-radius: 6px; border: 1px solid #eee;
+  }
+  .line-row .lf { flex: 3; }
+  .line-row .lf-sm { flex: 1; }
+
+  .btn-add {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; background: #f5f5f5; border: 1px dashed #ccc;
+    border-radius: 5px; font-family: 'DM Sans', sans-serif;
+    font-size: 12px; color: #888; cursor: pointer; margin-top: 4px;
+  }
+  .btn-add:hover { background: #eee; color: #555; }
+
+  .btn-remove {
+    padding: 8px 10px; background: none; border: none;
+    color: #ccc; font-size: 16px; cursor: pointer; border-radius: 4px;
+  }
+  .btn-remove:hover { color: #C0392B; background: #fee; }
+
+  .generate-btn {
+    display: block; width: 100%; padding: 14px;
+    background: #1a1a1a; color: #fff; border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px;
+    font-weight: 600; cursor: pointer; margin-top: 8px;
+  }
+  .generate-btn:hover { background: #333; }
+
+  /* ════════ PRINT VIEW ════════ */
+  .print-view { display: none; }
+  .print-view.active { display: flex; flex-direction: column; align-items: center; padding: 20px 10px; }
+  #documentPages { width: 210mm; display: flex; flex-direction: column; gap: 14px; }
+
+  .toolbar { width: 210mm; display: flex; gap: 10px; margin-bottom: 14px; }
+  .toolbar button {
+    padding: 10px 20px; border: none; border-radius: 5px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .tb-print { background: #1a1a1a; color: #fff; flex: 1; }
+  .tb-print:hover { background: #333; }
+  .tb-pdf { background: #C0392B; color: #fff; flex: 1; }
+  .tb-pdf:hover { background: #a93226; }
+  .tb-back { background: #eee; color: #555; }
+  .tb-back:hover { background: #ddd; }
+  .tb-home { background: #f5f5f5; color: #555; }
+  .tb-home:hover { background: #e7e7e7; }
+  .output-hint {
+    width: 210mm; margin: -4px 0 10px; padding: 10px 12px;
+    border-radius: 8px; background: #fff4e8; border: 1px solid #f0d2b2;
+    color: #7a4b16; font-size: 12px; display: none;
+  }
+  .output-hint.active { display: block; }
+
+  /* ════════ A4 ════════ */
+  @page { size: A4; margin: 0; }
+
+  .a4 {
+    width: 210mm; height: 297mm; background: #fff;
+    padding: 15mm 20mm 14mm 20mm;
+    position: relative; box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+    overflow: hidden; font-size: 11px; line-height: 1.45;
+    page-break-after: always;
+  }
+  .a4:last-child { page-break-after: auto; }
+
+  @media print {
+    body { background: #fff; }
+    .form-view, .toolbar, .output-hint { display: none !important; }
+    .print-view { display: flex !important; padding: 0; }
+    .a4 { box-shadow: none; }
+    #documentPages { gap: 0; }
+  }
+
+  /* ── Invoice inner styles ── */
+  .i-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding-bottom: 12px; border-bottom: 2.5px solid #1a1a1a; margin-bottom: 14px;
+  }
+  .i-logo-img { display: flex; align-items: flex-start; margin-left: -10px; background: #fff; }
+  .i-logo-img img { max-width: 240px; width: 100%; height: auto; display: block; background: #fff; }
+  .i-logo-sub { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #1a1a1a; margin-top: -1px; }
+  .i-logo-tag { font-size: 8.5px; color: #666; letter-spacing: 1.8px; text-transform: uppercase; margin-top: 2px; }
+  .i-title { text-align: right; }
+  .i-title h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+  .i-title .i-num { font-size: 11px; color: #777; margin-top: 1px; }
+
+  .i-info { display: flex; gap: 30px; margin-bottom: 12px; }
+  .i-info > div { flex: 1; }
+  .i-lbl { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.2px; color: #b0b0b0; margin-bottom: 4px; }
+  .i-info p { font-size: 11px; line-height: 1.55; color: #333; }
+  .i-info strong { font-weight: 600; color: #1a1a1a; }
+
+  .i-meta { display: flex; gap: 36px; padding: 8px 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; margin-bottom: 12px; }
+  .i-mi { display: flex; flex-direction: column; gap: 1px; }
+  .i-ml { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.8px; color: #b0b0b0; }
+  .i-mv { font-size: 11px; font-weight: 500; }
+
+  .i-veh { margin-bottom: 12px; padding: 10px 14px; background: #fafafa; border-left: 3px solid #C0392B; border-radius: 3px; }
+  .i-veh h3 { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.2px; color: #b0b0b0; margin-bottom: 6px; }
+  .i-vtbl { width: 100%; border-collapse: collapse; }
+  .i-vtbl td { padding: 3px 5px; font-size: 10.5px; border-bottom: 1px solid #eee; }
+  .i-vtbl tr:last-child td { border-bottom: none; }
+  .i-vl { width: 130px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; }
+  .i-vv { font-weight: 500; color: #1a1a1a; }
+
+  .i-tbl { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  .i-tbl thead th {
+    font-size: 8.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.8px; color: #b0b0b0; padding: 7px 5px;
+    border-bottom: 2px solid #1a1a1a; text-align: left;
+  }
+  .i-tbl thead th.r { text-align: right; }
+  .i-tbl thead th.c { text-align: center; }
+  .i-tbl tbody td { font-size: 11px; padding: 8px 5px; border-bottom: 1px solid #eee; color: #333; vertical-align: top; }
+  .i-tbl tbody td.r { text-align: right; }
+  .i-tbl tbody td.c { text-align: center; }
+  .i-desc { font-size: 9.5px; color: #999; }
+
+  .i-totals { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+  .i-tbox { width: 240px; }
+  .i-tl { display: flex; justify-content: space-between; padding: 3px 0; font-size: 11px; color: #555; }
+  .i-tl.sub { border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 2px; }
+  .i-tl.disc { color: #C0392B; font-weight: 500; }
+  .i-tl.grand { border-top: 2.5px solid #1a1a1a; margin-top: 4px; padding-top: 7px; font-weight: 700; font-size: 13px; color: #1a1a1a; }
+  .i-tl.paid { font-size: 10.5px; color: #888; }
+  .i-tl.due { background: #1a1a1a; color: #fff; font-weight: 700; font-size: 11px; padding: 6px 8px; margin-top: 4px; }
+
+  .i-pay { padding-top: 10px; border-top: 1px solid #eee; }
+  .i-pay h4 { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.2px; color: #b0b0b0; margin-bottom: 5px; }
+  .i-pay p { font-size: 10px; color: #666; line-height: 1.6; }
+
+  .i-footer {
+    position: absolute; bottom: 7mm; left: 20mm; right: 20mm;
+    text-align: center; font-size: 8px; color: #b0b0b0; line-height: 1.65;
+    border-top: 1px solid #eee; padding-top: 7px;
+  }
+  .i-footer strong { color: #888; font-weight: 500; }
+  .facture-page .i-footer,
+  .attestation-page .i-footer,
+  .garantie-page .i-footer {
+    bottom: 7mm; left: 20mm; right: 20mm;
+    padding-top: 7px; font-size: 8px; line-height: 1.65;
+  }
+
+  .i-note {
+    margin-bottom: 12px; padding: 10px 14px; background: #fafafa;
+    border: 1px solid #eee; border-radius: 4px;
+  }
+  .i-note h3 {
+    font-size: 8.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2.2px; color: #b0b0b0; margin-bottom: 6px;
+  }
+  .i-note p { font-size: 10.5px; color: #444; line-height: 1.65; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .list { list-style: none; padding: 0; margin: 0; }
+  .list li { position: relative; padding-left: 16px; margin-bottom: 7px; font-size: 10.5px; color: #444; }
+  .list li::before {
+    content: ''; position: absolute; left: 0; top: 7px;
+    width: 6px; height: 6px; border-radius: 50%; background: #C0392B;
+  }
+  .tick {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #1a1a1a; color: #fff; font-size: 10px; font-weight: 700;
+  }
+  .signatures { display: flex; gap: 24px; margin-top: 16px; }
+  .sig-box {
+    flex: 1; min-height: 95px; border: 1px solid #e5e5e5;
+    border-radius: 4px; padding: 10px 12px;
+  }
+  .sig-box h4 {
+    font-size: 8.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: #b0b0b0; margin-bottom: 10px;
+  }
+  .sig-line {
+    margin-top: 42px; padding-top: 8px; border-top: 1px solid #ddd;
+    font-size: 10px; color: #666;
+  }
+
+  .i-title .i-num { color: #2f2f2f; }
+  .i-lbl,
+  .i-ml,
+  .i-veh h3,
+  .i-note h3,
+  .i-pay h4,
+  .sig-box h4,
+  .i-tbl thead th,
+  .i-vl { color: #555; }
+  .i-info p,
+  .i-mv,
+  .i-vtbl td,
+  .i-tbl tbody td,
+  .i-note p,
+  .list li,
+  .sig-line { color: #111; }
+  .i-info strong,
+  .i-vv,
+  .i-tl.grand { color: #111; }
+  .i-tl,
+  .i-pay p { color: #222; }
+  .i-footer,
+  .i-footer strong { color: #444; }
+  .sig-line { border-top-color: #777; }
+  .facture-page .i-header,
+  .attestation-page .i-header,
+  .garantie-page .i-header { padding-bottom: 10px; margin-bottom: 10px; }
+  .facture-page .i-logo-img img,
+  .attestation-page .i-logo-img img,
+  .garantie-page .i-logo-img img { max-width: 225px; }
+  .facture-page .i-title h1,
+  .attestation-page .i-title h1,
+  .garantie-page .i-title h1 { font-size: 20px; }
+  .facture-page .i-title .i-num,
+  .attestation-page .i-title .i-num,
+  .garantie-page .i-title .i-num { font-size: 10px; }
+  .attestation-page .i-note { margin-bottom: 10px; padding: 9px 12px; }
+  .attestation-page .i-note p { font-size: 10px; line-height: 1.55; }
+  .attestation-page .i-tbl tbody td { padding: 6px 5px; }
+  .attestation-page .i-info { gap: 24px; margin-bottom: 10px; }
+  .attestation-page .i-info p { font-size: 10px; line-height: 1.45; }
+  .attestation-page .i-meta { gap: 24px; padding: 7px 0; margin-bottom: 10px; }
+  .attestation-page .i-veh { margin-bottom: 10px; padding: 9px 12px; }
+  .attestation-page .i-veh h3 { margin-bottom: 5px; }
+  .attestation-page .i-vtbl td { padding: 2px 5px; font-size: 10px; }
+  .attestation-page .i-tbl { margin-bottom: 10px; }
+  .attestation-page .i-tbl thead th { padding: 6px 5px; }
+  .attestation-page .signatures { margin-top: 10px; margin-bottom: 32mm; gap: 16px; }
+  .attestation-page .sig-box { min-height: 74px; padding: 9px 10px; }
+  .attestation-page .sig-box h4 { margin-bottom: 6px; }
+  .attestation-page .sig-line { margin-top: 24px; }
+  .garantie-page { padding: 11mm 18mm 12mm 18mm; line-height: 1.35; }
+  .garantie-page .i-info { gap: 22px; margin-bottom: 8px; }
+  .garantie-page .i-info p { font-size: 10px; line-height: 1.4; }
+  .garantie-page .i-meta { gap: 24px; padding: 6px 0; margin-bottom: 8px; }
+  .garantie-page .i-ml { font-size: 7.5px; }
+  .garantie-page .i-mv { font-size: 10px; }
+  .garantie-page .i-veh { margin-bottom: 8px; padding: 8px 12px; }
+  .garantie-page .i-veh h3 { margin-bottom: 4px; }
+  .garantie-page .i-vtbl td { padding: 2px 4px; font-size: 10px; }
+  .garantie-page .i-note { margin-bottom: 8px; padding: 8px 12px; }
+  .garantie-page .i-note h3 { margin-bottom: 4px; font-size: 8px; letter-spacing: 1.8px; }
+  .garantie-page .i-note p { font-size: 9.6px; line-height: 1.42; }
+  .garantie-page .i-note p + p { margin-top: 4px; }
+  .garantie-page .signatures { margin-top: 8px; margin-bottom: 26mm; gap: 18px; }
+  .garantie-page .sig-box { min-height: 64px; padding: 10px 12px; }
+  .garantie-page .sig-box h4 { margin-bottom: 6px; }
+  .garantie-page .sig-line { margin-top: 18px; }
+
+  .print-btn {
+    position: fixed; top: 16px; right: 16px;
+    padding: 9px 20px; background: #1a1a1a; color: #fff; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+    cursor: pointer; border-radius: 4px; z-index: 100;
+  }
+  .print-btn:hover { background: #333; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ FORMULAIRE ═══════════ -->
+<div class="form-view" id="formView">
+  <div class="form-header">
+    <div class="fh-logo"><img src="logo_dujardin.png" alt="Dujardin Automobile"></div>
+    <div class="fh-sub">Automobile</div>
+    <h2>Générateur de Facture d'Acompte</h2>
+    <p>Remplissez les champs et générez votre facture d'acompte A4</p>
+    <a class="home-link" href="Dujardin Service.html">Retour à Dujardin Services</a>
+  </div>
+
+  <div class="card">
+    <h3>Informations facture</h3>
+    <div class="row">
+	      <div>
+	        <label>N° Facture</label>
+	        <div class="invoice-number-field">
+	          <span class="invoice-number-prefix">FA-2026-</span>
+	          <input id="f_num_suffix" class="invoice-number-suffix" maxlength="4" placeholder="XXXX" oninput="formatInvoiceSuffix(this)">
+	        </div>
+	      </div>
+      <div><label>Date d'émission</label><input id="f_date" type="date"></div>
+    </div>
+    <div class="row">
+      <div><label>Mode de paiement</label>
+        <select id="f_pay">
+          <option>Chèque bancaire</option>
+          <option>Virement bancaire</option>
+        </select>
+      </div>
+      <div><label>Référence dossier</label><input id="f_ref" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Client</h3>
+    <div class="row">
+      <div><label>Nom</label><input id="c_nom" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+      <div><label>Prénom</label><input id="c_prenom" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+    </div>
+    <div class="row">
+      <div><label>Adresse</label><input id="c_addr"></div>
+      <div><label>Code postal & Ville</label><input id="c_city"></div>
+    </div>
+    <div class="row">
+      <div><label>Téléphone</label><input id="c_tel" placeholder="06 12 34 56 78" maxlength="14" oninput="formatPhone(this)"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Véhicule réservé</h3>
+    <div class="row">
+      <div><label>Marque</label><input id="v_marque"></div>
+      <div><label>Modèle</label><input id="v_modele"></div>
+    </div>
+    <div class="row">
+      <div><label>Année</label><input id="v_annee"></div>
+      <div><label>Mise en circulation</label><input id="v_mec" placeholder="JJ/MM/AAAA" maxlength="10" oninput="formatDate(this)"></div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Immatriculation</label>
+        <input id="v_immat" class="immat-input" placeholder="AA-123-BB" maxlength="9" oninput="formatImmat(this)">
+      </div>
+      <div><label>N° VIN</label><input id="v_vin" placeholder="SAJXXXXXXXXXXXXXX" maxlength="17" oninput="formatVin(this)"></div>
+    </div>
+    <div class="row">
+	      <div>
+	        <label>Kilométrage</label>
+	        <div class="unit-input-field">
+	          <input id="v_km" class="unit-input" inputmode="numeric" oninput="formatMileage(this)">
+	          <span class="unit-suffix">km</span>
+	        </div>
+	      </div>
+      <div><label>Énergie</label>
+        <select id="v_energie">
+          <option selected>Diesel</option>
+          <option>Essence</option>
+          <option>Hybride</option>
+          <option>Électrique</option>
+          <option>GPL</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div><label>Transmission</label>
+        <select id="v_boite">
+          <option selected>Automatique</option>
+          <option>Manuelle</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Acompte</h3>
+    <div class="row">
+      <div><label>Prix total du véhicule (€)</label><input id="a_prix_total" type="number" step="0.01" oninput="calculateAcompte()"></div>
+      <div><label>Montant de l'acompte (€)</label><input id="a_acompte" type="number" step="0.01" oninput="calculateAcompte()"></div>
+    </div>
+    <div class="row">
+      <div><label>Reste à payer (€)</label><input id="a_reste" type="number" step="0.01" readonly></div>
+      <div><label>Date prévue de livraison</label><input id="a_date_livraison" type="date"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Observations</h3>
+    <div class="row">
+      <div><label>Observations complémentaires ?</label>
+        <select id="t_obs_has" onchange="toggleObservations()">
+          <option>Non</option>
+          <option>Oui</option>
+        </select>
+      </div>
+    </div>
+    <div class="row" id="observationsFields" style="display: none;">
+      <div><label>Observations</label>
+        <textarea id="t_obs" placeholder="Observations complémentaires..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-add" type="button" onclick="remplirTest()">Remplir données test</button>
+  <button class="generate-btn" onclick="generate()">Générer la facture d'acompte</button>
+</div>
+
+<!-- ═══════════ FACTURE A4 ═══════════ -->
+<div class="print-view" id="printView">
+  <div class="toolbar">
+    <button class="tb-home" onclick="window.location.href='Dujardin Service.html'">Accueil Dujardin Services</button>
+    <button class="tb-back" onclick="goBack()">← Modifier</button>
+    <button class="tb-print" onclick="openOutput('print')">Imprimer</button>
+    <button class="tb-pdf" onclick="openOutput('pdf')">Enregistrer en PDF</button>
+  </div>
+  <div class="output-hint" id="outputHint"></div>
+  <div id="documentPages"></div>
+</div>
+
+<script>
+// ── Auto-format immatriculation AA-123-BB ──
+function formatImmat(input) {
+  let v = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  let result = '';
+  for (let i = 0; i < v.length && i < 7; i++) {
+    if (i === 2 || i === 5) result += '-';
+    result += v[i];
+  }
+  input.value = result;
+}
+
+function formatPhone(input) {
+  let digits = input.value.replace(/\D/g, '').slice(0, 10);
+  let spaced = digits.replace(/(\d{2})(?=\d)/g, '$1 ');
+  input.value = spaced;
+}
+
+function formatVin(input) {
+  let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 17);
+  input.value = value;
+  if (value.length !== 17) {
+    input.classList.add('invalid');
+  } else {
+    input.classList.remove('invalid');
+  }
+}
+
+function formatDate(input) {
+  let digits = input.value.replace(/\D/g, '').slice(0, 8);
+  if (digits.length <= 2) {
+    input.value = digits;
+  } else if (digits.length <= 4) {
+    input.value = digits.slice(0, 2) + '/' + digits.slice(2);
+  } else {
+    input.value = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+  }
+}
+
+function formatUppercase(input) {
+  input.value = input.value.toUpperCase();
+}
+
+function formatInvoiceSuffix(input) {
+  input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+}
+
+function formatMileage(input) {
+  input.value = input.value.replace(/\D/g, '');
+}
+
+function toggleObservations() {
+  const hasObs = document.getElementById('t_obs_has').value === 'Oui';
+  document.getElementById('observationsFields').style.display = hasObs ? 'flex' : 'none';
+}
+
+function calculateAcompte() {
+  const prix = parseFloat(document.getElementById('a_prix_total').value) || 0;
+  const acompte = parseFloat(document.getElementById('a_acompte').value) || 0;
+  const reste = prix - acompte;
+  document.getElementById('a_reste').value = reste ? reste.toFixed(2) : '0.00';
+}
+
+function remplirTest() {
+  document.getElementById('f_num_suffix').value = '001';
+  formatInvoiceSuffix(document.getElementById('f_num_suffix'));
+  document.getElementById('f_date').value = '2026-04-16';
+  document.getElementById('f_pay').value = 'Virement bancaire';
+  document.getElementById('f_ref').value = '#CMD-001';
+  formatUppercase(document.getElementById('f_ref'));
+
+  document.getElementById('c_nom').value = 'Dupont';
+  formatUppercase(document.getElementById('c_nom'));
+  document.getElementById('c_prenom').value = 'Jean';
+  formatUppercase(document.getElementById('c_prenom'));
+  document.getElementById('c_addr').value = '15 Rue de la Paix';
+  document.getElementById('c_city').value = '59000 Lille';
+  document.getElementById('c_tel').value = '0612345678';
+  formatPhone(document.getElementById('c_tel'));
+
+  document.getElementById('v_marque').value = 'BMW';
+  document.getElementById('v_modele').value = 'Série 3';
+  document.getElementById('v_annee').value = '2018';
+  document.getElementById('v_mec').value = '12062018';
+  formatDate(document.getElementById('v_mec'));
+  document.getElementById('v_immat').value = 'AB123CD';
+  formatImmat(document.getElementById('v_immat'));
+  document.getElementById('v_vin').value = 'VF1XXXXXXXXXXXXXX';
+  formatVin(document.getElementById('v_vin'));
+  document.getElementById('v_km').value = '120000';
+  formatMileage(document.getElementById('v_km'));
+  document.getElementById('v_energie').value = 'Diesel';
+  document.getElementById('v_boite').value = 'Automatique';
+
+  document.getElementById('a_prix_total').value = '15000';
+  document.getElementById('a_acompte').value = '3000';
+  document.getElementById('a_date_livraison').value = '2026-04-30';
+  calculateAcompte();
+
+  document.getElementById('t_obs_has').value = 'Oui';
+  toggleObservations();
+  document.getElementById('t_obs').value = 'Véhicule de démonstration pour test du formulaire';
+}
+
+function fmt(n) {
+  return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+
+function fmtDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function fmtKm(value) {
+  const digits = (value || '').toString().replace(/\D/g, '');
+  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' km' : '';
+}
+
+function generate() {
+  const f_numSuffix = document.getElementById('f_num_suffix').value;
+  const f_num = 'FA-2026-' + (f_numSuffix || 'XXXX');
+  const f_date = fmtDate(document.getElementById('f_date').value);
+  const f_pay = document.getElementById('f_pay').value;
+  const f_ref = document.getElementById('f_ref').value.toUpperCase();
+
+  const c_nom = document.getElementById('c_nom').value;
+  const c_prenom = document.getElementById('c_prenom').value;
+  const c_name = c_nom + ' ' + c_prenom;
+  const c_addr = document.getElementById('c_addr').value;
+  const c_city = document.getElementById('c_city').value;
+  const c_tel = document.getElementById('c_tel').value;
+
+  const v = {};
+  ['marque','modele','annee','mec','immat','vin','km','energie','boite'].forEach(k => {
+    v[k] = document.getElementById('v_' + k).value;
+  });
+
+  const a_prix_total = parseFloat(document.getElementById('a_prix_total').value) || 0;
+  const a_acompte = parseFloat(document.getElementById('a_acompte').value) || 0;
+  const a_reste = parseFloat(document.getElementById('a_reste').value) || 0;
+  const a_date_livraison = fmtDate(document.getElementById('a_date_livraison').value);
+  const obs = document.getElementById('t_obs_has').value === 'Oui' ? document.getElementById('t_obs').value : '';
+
+  // Vehicle rows
+  const vehRows = [
+    ['Marque', v.marque], ['Modèle', v.modele], ['Année', v.annee],
+    ['Mise en circulation', v.mec], ['Immatriculation', v.immat],
+    ['N° VIN', v.vin], ['Kilométrage', fmtKm(v.km)], ['Énergie', v.energie],
+    ['Transmission', v.boite],
+  ].filter(r => r[1]).map(r => `<tr><td class="i-vl">${r[0]}</td><td class="i-vv">${r[1]}</td></tr>`).join('');
+
+  const clientTel = c_tel ? `<br>Tél : ${c_tel}` : '';
+
+  const html = `
+    <div class="a4 facture-page">
+    <div class="i-header">
+      <div class="i-logo-img">
+        <img src="logo_dujardin.png" alt="Dujardin Automobile">
+      </div>
+      <div class="i-title">
+        <h1>FACTURE D'ACOMPTE</h1>
+        <div class="i-num">N° ${f_num}</div>
+      </div>
+    </div>
+
+    <div class="i-info">
+      <div>
+        <div class="i-lbl">Garage</div>
+        <p><strong>Dujardin Automobile</strong><br>13 Rue du Trieu du Quesnoy<br>59390 Toufflers<br>06 98 00 59 59</p>
+      </div>
+      <div>
+        <div class="i-lbl">Client</div>
+        <p><strong>${c_name}</strong><br>${c_addr}<br>${c_city}${clientTel}</p>
+      </div>
+    </div>
+
+    <div class="i-meta">
+      <div class="i-mi"><span class="i-ml">Date d'émission</span><span class="i-mv">${f_date}</span></div>
+      <div class="i-mi"><span class="i-ml">Mode de paiement</span><span class="i-mv">${f_pay}</span></div>
+      <div class="i-mi"><span class="i-ml">Référence dossier</span><span class="i-mv">${f_ref}</span></div>
+    </div>
+
+    <div class="i-veh">
+      <h3>Véhicule réservé</h3>
+      <table class="i-vtbl">${vehRows}</table>
+    </div>
+
+    <div class="i-totals">
+      <div class="i-tbox">
+        <div class="i-tl sub"><span>Prix total du véhicule</span><span>${fmt(a_prix_total)}</span></div>
+        <div class="i-tl"><span>Acompte versé</span><span>${fmt(a_acompte)}</span></div>
+        <div class="i-tl grand"><span>Reste à payer</span><span>${fmt(a_reste)}</span></div>
+      </div>
+    </div>
+
+    <div class="i-note">
+      <h3>Livraison</h3>
+      <p>Date prévue de livraison : ${a_date_livraison || 'Non renseignée.'}</p>
+    </div>
+
+    <div class="i-note">
+      <h3>Mentions</h3>
+      <p>Acompte versé pour la réservation du véhicule.</p>
+      <p>Ce montant sera déduit du prix total lors de la vente finale.</p>
+      <p>La réservation est valable sous réserve des conditions convenues entre les parties.</p>
+    </div>
+
+    <div class="i-note">
+      <h3>Observations</h3>
+      <p>${obs || 'Aucune observation complémentaire.'}</p>
+    </div>
+
+    <div class="i-footer">
+      <strong>Dujardin Automobile</strong> — SARL au capital de 20 000 € — 13 Rue du Trieu du Quesnoy, 59390 Toufflers<br>
+      SIRET : 832 028 773 00063 — RCS Lille Métropole — N° TVA : FR83 832 028 773
+    </div>
+  `;
+
+  document.getElementById('documentPages').innerHTML = html;
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('printView').classList.add('active');
+  document.getElementById('outputHint').classList.remove('active');
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  document.getElementById('formView').style.display = 'block';
+  document.getElementById('printView').classList.remove('active');
+  document.getElementById('outputHint').classList.remove('active');
+  window.scrollTo(0, 0);
+}
+
+function openOutput(mode) {
+  const hint = document.getElementById('outputHint');
+  if (mode === 'pdf') {
+    hint.textContent = 'Dans la fenêtre suivante, choisissez "Enregistrer au format PDF" comme destination.';
+  } else {
+    hint.textContent = 'Dans la fenêtre suivante, choisissez votre imprimante papier.';
+  }
+  hint.classList.add('active');
+  window.print();
+}
+</script>
+</body>
+</html>

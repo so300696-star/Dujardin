@@ -1,0 +1,25 @@
+GENERATEUR DE DOSSIER CLIENT DUJARDIN
+
+Contenu du dossier :
+- Generateur de Dossier Client.html
+- logo_dujardin.png
+- Lisez-moi.txt
+
+Utilisation :
+1. Ouvrir le fichier "Generateur de Dossier Client.html" dans un navigateur internet.
+2. Remplir les informations du client, du vehicule et de la facture.
+3. Cliquer sur "Generer le dossier client".
+4. Verifier les 3 pages generees :
+   - Facture
+   - Attestation d'entretien
+   - Details de garantie
+5. Cliquer sur "Imprimer / Enregistrer en PDF".
+
+Conseil d'utilisation :
+- Utiliser de preference Google Chrome ou Microsoft Edge.
+- Le numero de dossier se met automatiquement en majuscules.
+- Le calcul de TVA se fait automatiquement a partir du prix TTC.
+
+Important :
+- Ne pas deplacer le logo hors du dossier.
+- Le fichier HTML et le logo doivent rester ensemble dans le meme dossier.

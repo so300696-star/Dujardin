@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bon de commande</title>
+<link rel="icon" type="image/png" sizes="16x16" href="logo_dujardin_fondblanc.png">
+<link rel="icon" type="image/png" sizes="32x32" href="logo_dujardin_fondblanc.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: #f0f0f0; color: #1a1a1a; }
+  .form-view { max-width: 980px; margin: 0 auto; padding: 30px 20px 60px; }
+  .form-header { text-align: center; margin-bottom: 32px; }
+  .form-header .fh-logo img { max-width: 220px; height: auto; }
+  .form-header .fh-sub { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #1a1a1a; }
+  .form-header h2 { margin-top: 16px; font-size: 20px; font-weight: 700; }
+  .form-header p { font-size: 13px; color: #888; margin-top: 4px; }
+  .home-link {
+    display: inline-flex; align-items: center; justify-content: center; margin-top: 14px; padding: 9px 16px;
+    border-radius: 999px; border: 1px solid #ddd; background: #fff; color: #555; text-decoration: none;
+    font-size: 12px; font-weight: 600;
+  }
+  .home-link:hover { background: #f5f5f5; color: #1a1a1a; }
+  .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .card h3 {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: #C0392B;
+    margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0;
+  }
+  .row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .row > * { flex: 1; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  label {
+    display: block; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+    color: #999; margin-bottom: 4px;
+  }
+  input, select, textarea {
+    width: 100%; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 5px; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; color: #1a1a1a; background: #fafafa;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #C0392B; background: #fff; }
+  input[readonly] { background: #f4f4f4; color: #555; }
+  textarea { resize: vertical; min-height: 70px; }
+  .invoice-number-field, .unit-input-field {
+    display: flex; align-items: center; border: 1px solid #e0e0e0; border-radius: 5px; background: #fafafa; overflow: hidden;
+  }
+  .invoice-number-prefix, .unit-suffix { padding: 9px 0 9px 12px; font-size: 13px; color: #1a1a1a; white-space: nowrap; }
+  .invoice-number-suffix, .unit-input { border: none; background: transparent; }
+  .invoice-number-suffix { padding-left: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .unit-suffix { padding: 9px 12px 9px 0; color: #8f8f8f; }
+  .invoice-number-field:focus-within, .unit-input-field:focus-within { border-color: #C0392B; background: #fff; }
+  .immat-input { text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+  .choice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 6px; }
+  .choice-item {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #e6e6e6;
+    border-radius: 6px; background: #fafafa; font-size: 13px; color: #444;
+  }
+  .choice-item input { width: auto; margin: 0; }
+  .line-list { display: flex; flex-direction: column; gap: 10px; }
+  .line-row {
+    display: grid; grid-template-columns: 2.3fr 1fr auto; gap: 8px; align-items: end;
+    padding: 10px 12px; background: #fafafa; border-radius: 6px; border: 1px solid #eee;
+  }
+  .btn-add {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #f5f5f5; border: 1px dashed #ccc;
+    border-radius: 5px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: #888; cursor: pointer; margin-top: 4px;
+  }
+  .btn-remove { padding: 8px 10px; background: none; border: none; color: #ccc; font-size: 16px; cursor: pointer; border-radius: 4px; }
+  .btn-remove:hover { color: #C0392B; background: #fee; }
+  .hint-line { font-size: 12px; color: #777; margin-top: 6px; }
+  .highlight-field input { border-color: #C0392B; background: #fff5f3; font-weight: 700; color: #7a1f16; }
+  .generate-btn {
+    display: block; width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px;
+  }
+  .print-view { display: none; }
+  .print-view.active { display: flex; flex-direction: column; align-items: center; padding: 20px 10px; }
+  #documentPages { width: 210mm; }
+  .toolbar { width: 210mm; display: flex; gap: 10px; margin-bottom: 14px; }
+  .toolbar button { padding: 10px 20px; border: none; border-radius: 5px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .tb-print { background: #1a1a1a; color: #fff; flex: 1; }
+  .tb-pdf { background: #C0392B; color: #fff; flex: 1; }
+  .tb-back { background: #eee; color: #555; }
+  .tb-home { background: #f5f5f5; color: #555; }
+  .output-hint {
+    width: 210mm; margin: -4px 0 10px; padding: 10px 12px; border-radius: 8px;
+    background: #fff4e8; border: 1px solid #f0d2b2; color: #7a4b16; font-size: 12px; display: none;
+  }
+  .output-hint.active { display: block; }
+  @page { size: A4; margin: 0; }
+  .a4 {
+    width: 210mm; height: 297mm; background: #fff; padding: 7mm 11mm 5mm; position: relative;
+    display: flex; flex-direction: column;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.12); overflow: hidden; font-size: 10.3px; line-height: 1.35;
+  }
+  @media print {
+    html, body { width: 210mm; height: 297mm; margin: 0; overflow: hidden; background: #fff; }
+    .form-view, .toolbar, .output-hint { display: none !important; }
+    .print-view { display: flex !important; padding: 0; width: 210mm; }
+    #documentPages { width: 210mm; }
+    .a4 {
+      box-shadow: none;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      page-break-after: avoid;
+      font-size: 9.9px;
+      line-height: 1.28;
+    }
+  }
+  .i-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 6px; border-bottom: 2px solid #1a1a1a; margin-bottom: 8px; }
+  .i-logo-img img { max-width: 205px; width: 100%; height: auto; display: block; }
+  .i-title { text-align: right; }
+  .i-title h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+  .i-title .i-num { font-size: 10px; color: #2f2f2f; margin-top: 1px; }
+  .i-title .i-head-meta { margin-top: 4px; display: flex; flex-direction: column; gap: 2px; align-items: flex-end; }
+  .i-title .i-head-line { font-size: 9.2px; color: #222; line-height: 1.2; }
+  .i-title .i-head-line strong { font-size: 8px; text-transform: uppercase; letter-spacing: 1.2px; color: #555; margin-right: 4px; }
+  .i-info { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 10px; margin-bottom: 12px; }
+  .i-info > div { flex: 1; }
+  .i-lbl { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.2px; color: #555; margin-bottom: 4px; }
+  .i-info p { font-size: 10.2px; line-height: 1.45; color: #111; }
+  .i-client-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; }
+  .i-client-grid div { font-size: 9.7px; color: #111; line-height: 1.35; }
+  .i-client-grid .full { grid-column: 1 / -1; }
+  .i-grid-2 { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+  .i-finance-grid { display: grid; grid-template-columns: 1.45fr 0.95fr; gap: 12px; align-items: stretch; margin-top: 12px; }
+  .i-box { margin-bottom: 0; padding: 6px 9px; background: #fff; border: 1px solid #e6e6e6; border-radius: 0; }
+  .i-sidebox { margin-bottom: 0; padding: 6px 9px; background: #fff; border: 1px solid #e6e6e6; border-radius: 0; }
+  .i-finance-grid > .i-box, .i-finance-grid > .i-sidebox { height: 100%; display: flex; flex-direction: column; box-sizing: border-box; }
+  .i-finance-grid > .i-box .i-tbl { flex: 1; }
+  .i-sidebox h3 {
+    font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.2px; color: #555; margin-bottom: 6px;
+  }
+  .i-box h3, .i-note h3 {
+    font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.2px; color: #555; margin-bottom: 6px;
+  }
+  .i-vtbl, .i-tbl { width: 100%; border-collapse: collapse; }
+  .i-split { display: grid; grid-template-columns: 1fr 1.12fr 0.92fr; gap: 8px; }
+  .i-split > div { min-width: 0; }
+  .i-split .i-vtbl { table-layout: auto; }
+  .i-split .i-vtbl td { padding: 2px 3px; }
+  .i-split .i-vl { width: 112px; font-size: 7.7px; letter-spacing: 0.7px; white-space: nowrap; }
+  .i-split .i-vv { padding-left: 0; font-size: 9.1px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+  .i-vtbl td { padding: 2px 4px; font-size: 9.8px; border-bottom: 1px solid #eee; vertical-align: top; color: #111; }
+  .i-vtbl tr:last-child td { border-bottom: none; }
+  .i-vl { width: 128px; font-size: 8.3px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #555; white-space: nowrap; }
+  .i-tbl { margin-bottom: 4px; }
+  .i-tbl thead th { font-size: 8.2px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px; color: #555; padding: 5px 4px; border-bottom: 2px solid #1a1a1a; text-align: left; }
+  .i-tbl thead th.r, .i-tbl tbody td.r { text-align: right; }
+  .i-tbl tbody td { font-size: 9px; padding: 3px 4px; border-bottom: 1px solid #eee; color: #111; vertical-align: top; }
+  .i-note { margin-bottom: 6px; padding: 7px 8px; background: #fafafa; border: 1px solid #eee; border-radius: 4px; }
+  .i-note p { font-size: 9.3px; color: #111; line-height: 1.35; white-space: pre-line; }
+  .i-mini { font-size: 8.8px; color: #222; margin-top: 4px; }
+  .i-mini.i-status { font-size: 9.6px; font-weight: 600; margin-top: 5px; }
+  .buyer-declare { margin-top: -2px; margin-bottom: 6px; font-size: 8px; color: #111; line-height: 1.2; }
+  .i-total-due {
+    margin-top: 8px; padding: 7px 10px; border-radius: 0; background: #fff4f1; border-top: 1.5px solid #C0392B; border-bottom: 1.5px solid #C0392B;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  .i-total-due .label { font-size: 8.7px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px; color: #8f3d34; }
+  .i-total-due .value { font-size: 16px; font-weight: 700; color: #7a1f16; white-space: nowrap; }
+  .signatures { display: flex; gap: 12px; margin-top: 12px; margin-bottom: 6mm; }
+  .sig-box { flex: 1; min-height: 62px; border: 1px solid #ddd; border-radius: 0; padding: 6px 7px; background: #fff; display: flex; flex-direction: column; }
+  .sig-box.buyer { flex: 1.12; min-height: 84px; }
+  .sig-box h4 { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #333; margin-bottom: 8px; }
+  .sig-line { margin-top: auto; border-top: 1px solid #777; padding-top: 6px; font-size: 8.6px; color: #222; }
+  .i-box + .i-box, .i-box + .i-sidebox { margin-top: 0; }
+  .i-footer { margin-top: auto; padding-top: 4mm; text-align: center; font-size: 6.4px; color: #444; line-height: 1.15; }
+  @media screen and (max-width: 860px) {
+    .row, .signatures { flex-direction: column; }
+    .grid-4, .i-client-grid, .i-info, .i-split, .i-finance-grid { grid-template-columns: 1fr; }
+    .line-row { grid-template-columns: 1fr; }
+    .toolbar, #documentPages, .output-hint { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="form-view" id="formView">
+  <div class="form-header">
+    <div class="fh-logo"><img src="logo_dujardin.png" alt="Dujardin Automobile"></div>
+    <div class="fh-sub">Automobile</div>
+    <h2>Bon de commande digital</h2>
+    <p>Version compacte du bon actuel, sans crédit et avec impression sur une seule page quand les champs inutiles restent vides.</p>
+    <a class="home-link" href="Dujardin Service.html">Retour à Dujardin Services</a>
+  </div>
+
+  <div class="card">
+    <h3>Informations bon</h3>
+    <div class="row">
+      <div>
+        <label>N° bon de commande</label>
+        <div class="invoice-number-field">
+          <span class="invoice-number-prefix">BC-2026-</span>
+          <input id="bc_num_suffix" class="invoice-number-suffix" maxlength="4" placeholder="XXXX" oninput="formatInvoiceSuffix(this)">
+        </div>
+      </div>
+      <div><label>Date du bon</label><input id="bc_date" type="date"></div>
+      <div><label>Vendeur</label><input id="bc_vendeur" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+    </div>
+    <div class="row">
+      <div><label>Type de vente</label>
+        <select id="bc_sale_type">
+          <option>Particulier</option>
+          <option>Acquéreur professionnel</option>
+          <option>Vente à marchand</option>
+        </select>
+      </div>
+      <div><label>Mode de paiement principal</label>
+        <select id="bc_payment">
+          <option>Comptant</option>
+          <option>Carte bancaire</option>
+          <option>Espèces</option>
+          <option>Virement bancaire</option>
+          <option>Chèque bancaire</option>
+        </select>
+      </div>
+      <div><label>Régime TVA</label>
+        <select id="bc_tva_mode" onchange="calculateTotals()">
+          <option>TVA sur marge</option>
+          <option>TVA classique</option>
+          <option>Sans TVA</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div><label>Date de mise à disposition</label><input id="bc_delivery_date" type="date"></div>
+      <div><label>Lieu de livraison</label><input id="bc_delivery_place"></div>
+      <div><label>Référence / dossier</label><input id="bc_ref" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+    </div>
+    <div class="row">
+      <div><label>Options ou précisions livraison</label><textarea id="bc_delivery_options"></textarea></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Acquéreur</h3>
+    <div class="row">
+      <div><label>Nom</label><input id="c_nom" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+      <div><label>Prénom</label><input id="c_prenom" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+      <div><label>Téléphone domicile</label><input id="c_tel_home" maxlength="14" oninput="formatPhone(this)"></div>
+    </div>
+    <div class="row">
+      <div><label>Téléphone bureau</label><input id="c_tel_work" maxlength="14" oninput="formatPhone(this)"></div>
+      <div><label>Email</label><input id="c_mail"></div>
+      <div><label>Profession / société</label><input id="c_company" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+    </div>
+    <div class="row">
+      <div><label>Adresse</label><input id="c_addr"></div>
+      <div><label>Code postal et ville</label><input id="c_city"></div>
+      <div><label>Co-acquéreur</label><input id="c_co" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+    </div>
+    <div class="row">
+      <div><label>N° pièce / permis</label><input id="c_id"></div>
+      <div><label>SIRET si professionnel</label><input id="c_siret" maxlength="18" oninput="formatSiret(this)"></div>
+      <div><label>Fait à</label><input id="bc_signed_place" value="Toufflers"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Véhicule commandé</h3>
+    <div class="row">
+      <div><label>Marque</label><input id="v_marque"></div>
+      <div><label>Modèle</label><input id="v_modele"></div>
+      <div><label>Version</label><input id="v_version"></div>
+    </div>
+    <div class="row">
+      <div><label>Type</label><input id="v_type"></div>
+      <div><label>Carrosserie</label><input id="v_carrosserie"></div>
+      <div><label>Nombre de portes</label><input id="v_doors"></div>
+    </div>
+    <div class="row">
+      <div><label>N° de châssis / VIN</label><input id="v_vin" maxlength="17" oninput="formatVin(this)"></div>
+      <div><label>Immatriculation</label><input id="v_immat" class="immat-input" maxlength="9" oninput="formatImmat(this)"></div>
+      <div><label>Date 1re mise en circulation</label><input id="v_mec" maxlength="10" placeholder="JJ/MM/AAAA" oninput="formatDate(this)"></div>
+    </div>
+    <div class="row">
+      <div><label>Année modèle</label><input id="v_annee_modele"></div>
+      <div><label>Puissance fiscale</label><input id="v_power"></div>
+      <div><label>Énergie</label><input id="v_energie"></div>
+    </div>
+    <div class="row">
+      <div><label>Km réels parcourus</label><div class="unit-input-field"><input id="v_km_reels" class="unit-input" inputmode="numeric" oninput="formatMileage(this)"><span class="unit-suffix">km</span></div></div>
+      <div><label>Km compteur non garantis</label><div class="unit-input-field"><input id="v_km_nongar" class="unit-input" inputmode="numeric" oninput="formatMileage(this)"><span class="unit-suffix">km</span></div></div>
+      <div><label>Couleur du véhicule livré</label><input id="v_color"></div>
+    </div>
+    <label>Statut du véhicule</label>
+    <div class="choice-grid">
+      <label class="choice-item"><input type="checkbox" name="v_flags" value="Ex loueur">Ex loueur</label>
+      <label class="choice-item"><input type="checkbox" name="v_flags" value="Ex auto-école">Ex auto-école</label>
+      <label class="choice-item"><input type="checkbox" name="v_flags" value="Véhicule en stock">Véhicule en stock</label>
+      <label class="choice-item"><input type="checkbox" name="v_flags" value="Import">Import</label>
+    </div>
+    <div class="row">
+      <div><label>Garantie</label>
+        <select id="v_garantie">
+          <option></option>
+          <option>3 mois</option>
+          <option>6 mois</option>
+          <option>9 mois</option>
+          <option>12 mois</option>
+          <option>Constructeur</option>
+          <option>Sans garantie</option>
+        </select>
+      </div>
+      <div><label>Indice CO2 / information</label><input id="v_co2"></div>
+      <div><label>Observations véhicule</label><input id="v_obs_short"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Options, accessoires et prestations</h3>
+    <div class="line-list" id="lineList">
+      <div class="line-row">
+        <div><label>Désignation</label><input class="l-des" value=""></div>
+        <div><label>Montant TTC (€)</label><input class="l-amt" type="number" step="0.01" oninput="calculateLineTotals()"></div>
+        <button class="btn-remove" type="button" onclick="removeLine(this)">×</button>
+      </div>
+    </div>
+    <button class="btn-add" type="button" onclick="addLine()">+ Ajouter une ligne</button>
+  </div>
+
+  <div class="card">
+    <h3>Montants du bon</h3>
+    <div class="row">
+      <div><label>Entrer le montant du véhicule TTC (€)</label><input id="prix_vehicule" type="number" step="0.01" oninput="calculateTotals()"></div>
+      <div><label>Options et accessoires TTC (€)</label><input id="prix_options" readonly></div>
+      <div><label>Carte grise (€)</label><input id="prix_cg" type="number" step="0.01" oninput="calculateTotals()"></div>
+      <div><label>Frais d'immatriculation (€)</label><input id="prix_immat" type="number" step="0.01" oninput="calculateTotals()"></div>
+    </div>
+    <div class="row">
+      <div><label>Carrosserie (€)</label><input id="prix_carrosserie" type="number" step="0.01" oninput="calculateTotals()"></div>
+      <div><label>Accessoires hors détail (€)</label><input id="prix_accessoires" type="number" step="0.01" oninput="calculateTotals()"></div>
+      <div><label>Prix HT (€)</label><input id="prix_ht" readonly></div>
+      <div><label>Montant TVA (€)</label><input id="prix_tva" readonly></div>
+    </div>
+    <div class="grid-4">
+      <div><label>Montant total TTC (€)</label><input id="prix_total_ttc" readonly></div>
+      <div><label>Montant de la reprise (€)</label><input id="prix_reprise" type="number" step="0.01" oninput="calculateTotals()"></div>
+      <div><label>Montant de l'acompte (€)</label><input id="prix_acompte" type="number" step="0.01" oninput="calculateTotals()"></div>
+      <div class="highlight-field"><label>Solde dû (€)</label><input id="prix_solde" readonly></div>
+    </div>
+    <div class="hint-line">Le HT et la TVA sont calculés automatiquement à partir du total TTC selon le régime TVA choisi.</div>
+  </div>
+
+  <div class="card">
+    <h3>Reprise d'un véhicule</h3>
+    <div class="row">
+      <div><label>Marque</label><input id="r_marque"></div>
+      <div><label>Type</label><input id="r_type"></div>
+      <div><label>Modèle</label><input id="r_modele"></div>
+    </div>
+    <div class="row">
+      <div><label>Année modèle</label><input id="r_annee"></div>
+      <div><label>Version</label><input id="r_version"></div>
+      <div><label>Couleur</label><input id="r_color"></div>
+    </div>
+    <div class="row">
+      <div><label>Nombre de portes</label><input id="r_doors"></div>
+      <div><label>Puissance</label><input id="r_power"></div>
+      <div><label>Genre</label>
+        <select id="r_genre">
+          <option></option>
+          <option>VSP</option>
+          <option>VP</option>
+          <option>VU</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div><label>Date 1re mise en circulation</label><input id="r_mec" maxlength="10" placeholder="JJ/MM/AAAA" oninput="formatDate(this)"></div>
+      <div><label>N° de série</label><input id="r_vin" maxlength="17" oninput="formatVin(this)"></div>
+      <div><label>Immatriculation</label><input id="r_immat" class="immat-input" maxlength="9" oninput="formatImmat(this)"></div>
+    </div>
+    <div class="row">
+      <div><label>Km réels parcourus</label><div class="unit-input-field"><input id="r_km_reels" class="unit-input" inputmode="numeric" oninput="formatMileage(this)"><span class="unit-suffix">km</span></div></div>
+      <div><label>Km compteur non garantis</label><div class="unit-input-field"><input id="r_km_nongar" class="unit-input" inputmode="numeric" oninput="formatMileage(this)"><span class="unit-suffix">km</span></div></div>
+      <div><label>Estimation reprise N°</label><input id="r_estimation"></div>
+    </div>
+    <div class="row">
+      <div><label>Remarques reprise</label><textarea id="r_remarks"></textarea></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Règlement et conditions</h3>
+    <div class="row">
+      <div><label>Acompte versé le</label><input id="reg_acompte_date" type="date"></div>
+    </div>
+    <label>Moyens de règlement</label>
+    <div class="choice-grid">
+      <label class="choice-item"><input type="checkbox" name="pay_flags" value="Carte bancaire">Carte bancaire</label>
+      <label class="choice-item"><input type="checkbox" name="pay_flags" value="Espèces">Espèces</label>
+      <label class="choice-item"><input type="checkbox" name="pay_flags" value="Virement bancaire">Virement bancaire</label>
+      <label class="choice-item"><input type="checkbox" name="pay_flags" value="Chèque">Chèque</label>
+    </div>
+  </div>
+
+  <button class="btn-add" type="button" onclick="fillTest()">Remplir test bon de commande</button>
+  <button class="generate-btn" type="button" onclick="generate()">Générer le bon de commande</button>
+</div>
+
+<div class="print-view" id="printView">
+  <div class="toolbar">
+    <button class="tb-home" onclick="window.location.href='Dujardin Service.html'">Accueil Dujardin Services</button>
+    <button class="tb-back" onclick="goBack()">← Modifier</button>
+    <button class="tb-print" onclick="openOutput('print')">Imprimer</button>
+    <button class="tb-pdf" onclick="openOutput('pdf')">Enregistrer en PDF</button>
+  </div>
+  <div class="output-hint" id="outputHint"></div>
+  <div id="documentPages"></div>
+</div>
+
+<script>
+function parseAmount(value) {
+  return parseFloat(String(value || '').replace(',', '.')) || 0;
+}
+function formatAmountInput(input, value) {
+  input.value = value ? value.toFixed(2) : '';
+}
+function fmt(n) {
+  return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+function fmtDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+function fmtKm(value) {
+  const digits = String(value || '').replace(/\D/g, '');
+  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' km' : '';
+}
+function escapeHtml(value) {
+  return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function formatUppercase(input) { input.value = input.value.toUpperCase(); }
+function formatInvoiceSuffix(input) { input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4); }
+function formatImmat(input) {
+  let v = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  let result = '';
+  for (let i = 0; i < v.length && i < 7; i++) {
+    if (i === 2 || i === 5) result += '-';
+    result += v[i];
+  }
+  input.value = result;
+}
+function formatPhone(input) {
+  const digits = input.value.replace(/\D/g, '').slice(0, 10);
+  input.value = digits.replace(/(\d{2})(?=\d)/g, '$1 ');
+}
+function formatVin(input) {
+  const value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 17);
+  input.value = value;
+  input.classList.toggle('invalid', value.length > 0 && value.length !== 17);
+}
+function formatDate(input) {
+  let digits = input.value.replace(/\D/g, '').slice(0, 8);
+  if (digits.length <= 2) input.value = digits;
+  else if (digits.length <= 4) input.value = digits.slice(0, 2) + '/' + digits.slice(2);
+  else input.value = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+}
+function formatMileage(input) { input.value = input.value.replace(/\D/g, ''); }
+function formatSiret(input) {
+  const digits = input.value.replace(/\D/g, '').slice(0, 14);
+  input.value = digits.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
+}
+function collectChecks(name) {
+  return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map(input => input.value);
+}
+function addLine(values = {}) {
+  const row = document.createElement('div');
+  row.className = 'line-row';
+  row.innerHTML = `
+    <div><label>Désignation</label><input class="l-des" value="${values.des || ''}"></div>
+    <div><label>Montant TTC (€)</label><input class="l-amt" type="number" step="0.01" value="${values.amt || ''}" oninput="calculateLineTotals()"></div>
+    <button class="btn-remove" type="button" onclick="removeLine(this)">×</button>
+  `;
+  document.getElementById('lineList').appendChild(row);
+}
+function removeLine(button) {
+  const rows = document.querySelectorAll('#lineList .line-row');
+  if (rows.length === 1) rows[0].querySelectorAll('input').forEach(input => input.value = '');
+  else button.closest('.line-row').remove();
+  calculateLineTotals();
+}
+function calculateLineTotals() {
+  let linesTotal = 0;
+  document.querySelectorAll('#lineList .line-row').forEach(row => {
+    linesTotal += parseAmount(row.querySelector('.l-amt').value);
+  });
+  formatAmountInput(document.getElementById('prix_options'), linesTotal);
+  calculateTotals();
+}
+function calculateTotals() {
+  const vehicule = parseAmount(document.getElementById('prix_vehicule').value);
+  const options = parseAmount(document.getElementById('prix_options').value);
+  const cg = parseAmount(document.getElementById('prix_cg').value);
+  const immat = parseAmount(document.getElementById('prix_immat').value);
+  const carrosserie = parseAmount(document.getElementById('prix_carrosserie').value);
+  const accessoires = parseAmount(document.getElementById('prix_accessoires').value);
+  const reprise = parseAmount(document.getElementById('prix_reprise').value);
+  const acompte = parseAmount(document.getElementById('prix_acompte').value);
+  const totalTtc = vehicule + options + cg + immat + carrosserie + accessoires;
+  let ht = totalTtc;
+  let tva = 0;
+  if (document.getElementById('bc_tva_mode').value === 'TVA classique') {
+    ht = totalTtc / 1.2;
+    tva = totalTtc - ht;
+  }
+  const solde = totalTtc - reprise - acompte;
+  formatAmountInput(document.getElementById('prix_ht'), ht);
+  formatAmountInput(document.getElementById('prix_tva'), tva);
+  formatAmountInput(document.getElementById('prix_total_ttc'), totalTtc);
+  formatAmountInput(document.getElementById('prix_solde'), solde);
+}
+function fillTest() {
+  document.getElementById('bc_num_suffix').value = 'BC01';
+  document.getElementById('bc_date').value = '2026-04-17';
+  document.getElementById('bc_vendeur').value = 'DUJARDIN';
+  document.getElementById('bc_sale_type').value = 'Particulier';
+  document.getElementById('bc_payment').value = 'Comptant';
+  document.getElementById('bc_tva_mode').value = 'TVA sur marge';
+  document.getElementById('bc_delivery_date').value = '2026-04-30';
+  document.getElementById('bc_delivery_place').value = 'Toufflers';
+  document.getElementById('bc_ref').value = 'DOS-2026-014';
+  document.getElementById('bc_delivery_options').value = 'Mise à disposition avec préparation esthétique et double de clés.';
+  document.getElementById('c_nom').value = 'LEFEBVRE';
+  document.getElementById('c_prenom').value = 'THOMAS';
+  document.getElementById('c_tel_home').value = '0611223344'; formatPhone(document.getElementById('c_tel_home'));
+  document.getElementById('c_tel_work').value = '0320554411'; formatPhone(document.getElementById('c_tel_work'));
+  document.getElementById('c_mail').value = 'thomas.lefebvre@mail.fr';
+  document.getElementById('c_addr').value = '48 Rue de Roubaix';
+  document.getElementById('c_city').value = '59200 Tourcoing';
+  document.getElementById('c_id').value = 'Permis / CNI';
+  document.getElementById('bc_signed_place').value = 'Toufflers';
+  document.getElementById('v_marque').value = 'BMW';
+  document.getElementById('v_modele').value = 'Série 3 Touring';
+  document.getElementById('v_version').value = '318D Business';
+  document.getElementById('v_type').value = 'Touring';
+  document.getElementById('v_carrosserie').value = 'Break';
+  document.getElementById('v_doors').value = '5';
+  document.getElementById('v_vin').value = 'WBA8K11020A123456'; formatVin(document.getElementById('v_vin'));
+  document.getElementById('v_immat').value = 'AB123CD'; formatImmat(document.getElementById('v_immat'));
+  document.getElementById('v_mec').value = '12062018'; formatDate(document.getElementById('v_mec'));
+  document.getElementById('v_annee_modele').value = '2018';
+  document.getElementById('v_power').value = '8 CV';
+  document.getElementById('v_energie').value = 'Diesel';
+  document.getElementById('v_km_reels').value = '128450';
+  document.getElementById('v_color').value = 'Noir';
+  document.getElementById('v_garantie').value = '6 mois';
+  document.getElementById('v_obs_short').value = 'Véhicule révisé et préparé';
+  document.querySelectorAll('input[name="v_flags"]').forEach(input => { input.checked = ['Import'].includes(input.value); });
+  document.getElementById('lineList').innerHTML = '';
+  addLine({ des: '', amt: '' });
+  document.getElementById('prix_vehicule').value = '15990';
+  document.getElementById('prix_cg').value = '185.76';
+  document.getElementById('prix_immat').value = '0';
+  document.getElementById('prix_carrosserie').value = '0';
+  document.getElementById('prix_accessoires').value = '0';
+  document.getElementById('prix_reprise').value = '1500';
+  document.getElementById('prix_acompte').value = '2000';
+  document.getElementById('r_marque').value = 'RENAULT';
+  document.getElementById('r_modele').value = 'CLIO';
+  document.getElementById('r_annee').value = '2012';
+  document.getElementById('r_version').value = '1.5 DCI';
+  document.getElementById('r_color').value = 'GRIS';
+  document.getElementById('r_doors').value = '5';
+  document.getElementById('r_power').value = '5 CV';
+  document.getElementById('r_genre').value = 'VP';
+  document.getElementById('r_mec').value = '15032012'; formatDate(document.getElementById('r_mec'));
+  document.getElementById('r_vin').value = 'VF15R123456789012'; formatVin(document.getElementById('r_vin'));
+  document.getElementById('r_immat').value = 'CD456EF'; formatImmat(document.getElementById('r_immat'));
+  document.getElementById('r_km_reels').value = '184000';
+  document.getElementById('r_estimation').value = 'REP-2026-07';
+  document.getElementById('r_remarks').value = 'Véhicule repris en l’état avec usure d’usage.';
+  document.getElementById('reg_acompte_date').value = '2026-04-17';
+  document.querySelectorAll('input[name="pay_flags"]').forEach(input => { input.checked = ['Virement bancaire'].includes(input.value); });
+  calculateLineTotals();
+}
+function vehicleRows(prefix) {
+  const fields = [
+    ['Marque', document.getElementById(prefix + '_marque')?.value || ''],
+    ['Modèle', document.getElementById(prefix + '_modele')?.value || ''],
+    ['Version', document.getElementById(prefix + '_version')?.value || ''],
+    ['Type', document.getElementById(prefix + '_type')?.value || ''],
+    ['Carrosserie', document.getElementById(prefix + '_carrosserie')?.value || ''],
+    ['Nombre de portes', document.getElementById(prefix + '_doors')?.value || ''],
+    ['N° de série', document.getElementById(prefix + '_vin')?.value || ''],
+    ['Immatriculation', document.getElementById(prefix + '_immat')?.value || ''],
+    ['Date 1re mise en circulation', document.getElementById(prefix + '_mec')?.value || ''],
+    ['Année modèle', document.getElementById(prefix + '_annee_modele')?.value || document.getElementById(prefix + '_annee')?.value || ''],
+    ['Puissance', document.getElementById(prefix + '_power')?.value || ''],
+    ['Énergie / genre', document.getElementById(prefix + '_energie')?.value || document.getElementById(prefix + '_genre')?.value || ''],
+    ['Km réels parcourus', fmtKm(document.getElementById(prefix + '_km_reels')?.value || '')],
+    ['Km non garantis', fmtKm(document.getElementById(prefix + '_km_nongar')?.value || '')],
+    ['Couleur', document.getElementById(prefix + '_color')?.value || '']
+  ];
+  return fields.filter(row => row[1]).map(row => `<tr><td class="i-vl">${escapeHtml(row[0])}</td><td class="i-vv">${escapeHtml(row[1])}</td></tr>`).join('');
+}
+function vehicleGrid(prefix) {
+  const fields = [
+    ['Marque', document.getElementById(prefix + '_marque')?.value || ''],
+    ['Modèle', document.getElementById(prefix + '_modele')?.value || ''],
+    ['Version', document.getElementById(prefix + '_version')?.value || ''],
+    ['Type', document.getElementById(prefix + '_type')?.value || ''],
+    ['Carrosserie', document.getElementById(prefix + '_carrosserie')?.value || ''],
+    ['Nombre de portes', document.getElementById(prefix + '_doors')?.value || ''],
+    ['N° de série', document.getElementById(prefix + '_vin')?.value || ''],
+    ['Immatriculation', document.getElementById(prefix + '_immat')?.value || ''],
+    ['Date 1re mise en circulation', document.getElementById(prefix + '_mec')?.value || ''],
+    ['Année modèle', document.getElementById(prefix + '_annee_modele')?.value || document.getElementById(prefix + '_annee')?.value || ''],
+    ['Puissance', document.getElementById(prefix + '_power')?.value || ''],
+    ['Énergie / genre', document.getElementById(prefix + '_energie')?.value || document.getElementById(prefix + '_genre')?.value || ''],
+    ['Km réels parcourus', fmtKm(document.getElementById(prefix + '_km_reels')?.value || '')],
+    ['Km non garantis', fmtKm(document.getElementById(prefix + '_km_nongar')?.value || '')],
+    ['Couleur', document.getElementById(prefix + '_color')?.value || '']
+  ].filter(row => row[1]);
+  if (!fields.length) return '';
+  const columns = [[], [], []];
+  fields.forEach((field, index) => columns[index % 3].push(field));
+  return `<div class="i-vgrid">${columns.map(col => {
+    if (!col.length) return '';
+    return `<div class="i-vcol"><table class="i-vtbl">${col.map(row => `<tr><td class="i-vl">${escapeHtml(row[0])}</td><td class="i-vv">${escapeHtml(row[1])}</td></tr>`).join('')}</table></div>`;
+  }).join('')}</div>`;
+}
+function splitInfoTable(items, columnCount = 3) {
+  const filled = items.filter(item => item[1]);
+  if (!filled.length) return '';
+  const columns = Array.from({ length: Math.max(1, columnCount) }, () => []);
+  const chunkSize = Math.ceil(filled.length / columns.length);
+  filled.forEach((item, index) => {
+    const columnIndex = Math.min(columns.length - 1, Math.floor(index / chunkSize));
+    columns[columnIndex].push(item);
+  });
+  const render = rows => rows.length ? `<table class="i-vtbl">${rows.map(row => `<tr><td class="i-vl">${escapeHtml(row[0])}</td><td class="i-vv">${escapeHtml(row[1])}</td></tr>`).join('')}</table>` : '';
+  return `<div class="i-split">${columns.map(col => `<div>${render(col)}</div>`).join('')}</div>`;
+}
+function renderInfoColumns(columns) {
+  const filledColumns = columns
+    .map(col => col.filter(item => item[1]))
+    .filter(col => col.length);
+  if (!filledColumns.length) return '';
+  const render = rows => `<table class="i-vtbl">${rows.map(row => `<tr><td class="i-vl">${escapeHtml(row[0])}</td><td class="i-vv">${escapeHtml(row[1])}</td></tr>`).join('')}</table>`;
+  return `<div class="i-split">${filledColumns.map(col => `<div>${render(col)}</div>`).join('')}</div>`;
+}
+function infoRow(label, value) {
+  if (!value) return '';
+  return `<tr><td class="i-vl">${escapeHtml(label)}</td><td class="i-vv">${escapeHtml(value)}</td></tr>`;
+}
+function moneyRow(label, amount, negative = false) {
+  if (!amount) return '';
+  return `<tr><td>${escapeHtml(label)}</td><td class="r">${negative ? '-' : ''}${fmt(amount)}</td></tr>`;
+}
+function generate() {
+  calculateTotals();
+  const bcNum = 'BC-2026-' + (document.getElementById('bc_num_suffix').value || 'XXXX');
+  const bcDate = fmtDate(document.getElementById('bc_date').value);
+  const deliveryDate = fmtDate(document.getElementById('bc_delivery_date').value);
+  const clientName = [document.getElementById('c_nom').value, document.getElementById('c_prenom').value].filter(Boolean).join(' ');
+  const clientEntries = [
+    clientName ? `<div class="full"><strong>${escapeHtml(clientName)}</strong></div>` : '',
+    document.getElementById('c_addr').value ? `<div>${escapeHtml(document.getElementById('c_addr').value)}</div>` : '',
+    document.getElementById('c_city').value ? `<div>${escapeHtml(document.getElementById('c_city').value)}</div>` : '',
+    document.getElementById('c_tel_home').value ? `<div>Tél. domicile : ${escapeHtml(document.getElementById('c_tel_home').value)}</div>` : '',
+    document.getElementById('c_tel_work').value ? `<div>Tél. bureau : ${escapeHtml(document.getElementById('c_tel_work').value)}</div>` : '',
+    document.getElementById('c_mail').value ? `<div>Email : ${escapeHtml(document.getElementById('c_mail').value)}</div>` : '',
+    document.getElementById('c_company').value ? `<div>Profession / société : ${escapeHtml(document.getElementById('c_company').value)}</div>` : '',
+    document.getElementById('c_co').value ? `<div>Co-acquéreur : ${escapeHtml(document.getElementById('c_co').value)}</div>` : '',
+    document.getElementById('c_id').value ? `<div>Référence pièce : ${escapeHtml(document.getElementById('c_id').value)}</div>` : '',
+    document.getElementById('c_siret').value ? `<div>SIRET : ${escapeHtml(document.getElementById('c_siret').value)}</div>` : ''
+  ].filter(Boolean).join('');
+  const vehRows = vehicleRows('v');
+  const repriseRows = vehicleRows('r');
+  const vehSplit = splitInfoTable([
+    ['Marque', document.getElementById('v_marque').value],
+    ['Modèle', document.getElementById('v_modele').value],
+    ['Version', document.getElementById('v_version').value],
+    ['Type', document.getElementById('v_type').value],
+    ['Carrosserie', document.getElementById('v_carrosserie').value],
+    ['Nombre de portes', document.getElementById('v_doors').value],
+    ['N° de série', document.getElementById('v_vin').value],
+    ['Immatriculation', document.getElementById('v_immat').value],
+    ['Date 1re mise en circulation', document.getElementById('v_mec').value],
+    ['Année modèle', document.getElementById('v_annee_modele').value],
+    ['Puissance', document.getElementById('v_power').value],
+    ['Énergie', document.getElementById('v_energie').value],
+    ['Km réels parcourus', fmtKm(document.getElementById('v_km_reels').value)],
+    ['Km non garantis', fmtKm(document.getElementById('v_km_nongar').value)],
+    ['Couleur', document.getElementById('v_color').value]
+  ]);
+  const deliverySplit = renderInfoColumns([
+    [
+      ['Date de mise à disposition', deliveryDate],
+      ['Garantie', document.getElementById('v_garantie').value]
+    ],
+    [
+      ['Lieu de livraison', document.getElementById('bc_delivery_place').value],
+      ['CO2 / information', document.getElementById('v_co2').value]
+    ],
+    [
+      ['Observation véhicule', document.getElementById('v_obs_short').value]
+    ]
+  ]);
+  const repriseSplit = splitInfoTable([
+    ['Marque', document.getElementById('r_marque').value],
+    ['Modèle', document.getElementById('r_modele').value],
+    ['Version', document.getElementById('r_version').value],
+    ['Année modèle', document.getElementById('r_annee').value],
+    ['N° de série', document.getElementById('r_vin').value],
+    ['Immatriculation', document.getElementById('r_immat').value],
+    ['Date 1re mise en circulation', document.getElementById('r_mec').value],
+    ['Genre', document.getElementById('r_genre').value],
+    ['Puissance', document.getElementById('r_power').value],
+    ['Km réels parcourus', fmtKm(document.getElementById('r_km_reels').value)],
+    ['Estimation reprise', document.getElementById('r_estimation').value]
+  ]);
+  const vehFlags = collectChecks('v_flags').join(', ');
+  const payFlags = collectChecks('pay_flags').join(', ');
+  const lines = Array.from(document.querySelectorAll('#lineList .line-row')).map(row => ({
+    des: row.querySelector('.l-des').value,
+    amt: parseAmount(row.querySelector('.l-amt').value)
+  })).filter(line => line.des || line.amt);
+  const lineRows = lines.length ? lines.map(line => `<tr><td>${escapeHtml(line.des)}</td><td class="r">${fmt(line.amt)}</td></tr>`).join('') : '';
+  const totalTtc = parseAmount(document.getElementById('prix_total_ttc').value);
+  const totalHt = parseAmount(document.getElementById('prix_ht').value);
+  const totalTva = parseAmount(document.getElementById('prix_tva').value);
+  const prixSolde = parseAmount(document.getElementById('prix_solde').value);
+  const financialRows = [
+    moneyRow('Prix du véhicule', parseAmount(document.getElementById('prix_vehicule').value)),
+    moneyRow('Options et accessoires', parseAmount(document.getElementById('prix_options').value)),
+    moneyRow('Carte grise', parseAmount(document.getElementById('prix_cg').value)),
+    moneyRow("Frais d'immatriculation", parseAmount(document.getElementById('prix_immat').value)),
+    moneyRow('Carrosserie', parseAmount(document.getElementById('prix_carrosserie').value)),
+    moneyRow('Accessoires hors détail', parseAmount(document.getElementById('prix_accessoires').value)),
+    moneyRow('Prix HT', totalHt),
+    moneyRow('Montant TVA', totalTva),
+    moneyRow('Montant de la reprise', parseAmount(document.getElementById('prix_reprise').value), true),
+    moneyRow("Montant de l'acompte", parseAmount(document.getElementById('prix_acompte').value), true)
+  ].filter(Boolean).join('');
+  const deliveryRows = [
+    infoRow('Date de mise à disposition', deliveryDate),
+    infoRow('Lieu de livraison', document.getElementById('bc_delivery_place').value),
+    infoRow('Garantie', document.getElementById('v_garantie').value),
+    infoRow('CO2 / information', document.getElementById('v_co2').value),
+    infoRow('Observation véhicule', document.getElementById('v_obs_short').value)
+  ].filter(Boolean).join('');
+  const paymentRows = [
+    infoRow('Mode principal', document.getElementById('bc_payment').value),
+    infoRow('Moyens de règlement', payFlags),
+    infoRow('Acompte versé le', fmtDate(document.getElementById('reg_acompte_date').value)),
+    infoRow('Régime TVA', document.getElementById('bc_tva_mode').value),
+    infoRow('Montant total TTC', fmt(totalTtc))
+  ].filter(Boolean).join('');
+  const headMeta = [
+    document.getElementById('bc_sale_type').value ? `<div class="i-head-line"><strong>Type de vente</strong>${escapeHtml(document.getElementById('bc_sale_type').value)}</div>` : '',
+    document.getElementById('bc_ref').value ? `<div class="i-head-line"><strong>Référence</strong>${escapeHtml(document.getElementById('bc_ref').value)}</div>` : ''
+  ].filter(Boolean).join('');
+  const optionsBlock = lineRows ? `<div class="i-box"><h3>Options, accessoires et prestations</h3><table class="i-tbl"><thead><tr><th>Désignation</th><th class="r">Montant TTC</th></tr></thead><tbody>${lineRows}</tbody></table></div>` : '';
+  const repriseBlock = repriseRows || document.getElementById('r_estimation').value || document.getElementById('r_remarks').value ? `<div class="i-box"><h3>Reprise d'un véhicule</h3>${repriseSplit || (repriseRows ? `<table class="i-vtbl">${repriseRows}</table>` : '')}${document.getElementById('r_remarks').value ? `<div class="i-mini"><strong>Remarques :</strong> ${escapeHtml(document.getElementById('r_remarks').value)}</div>` : ''}</div>` : '';
+  const html = `
+    <div class="a4">
+      <div class="i-header">
+        <div class="i-logo-img"><img src="logo_dujardin.png" alt="Dujardin Automobile"></div>
+        <div class="i-title">
+          <h1>BON DE COMMANDE</h1>
+          <div class="i-num">N° ${escapeHtml(bcNum)}</div>
+          ${headMeta ? `<div class="i-head-meta">${headMeta}</div>` : ''}
+        </div>
+      </div>
+      <div class="i-info">
+        <div class="i-box">
+          <div class="i-lbl">Garage</div>
+          <p><strong>Dujardin Automobile</strong><br>13 Rue du Trieu du Quesnoy<br>59390 Toufflers<br>06 98 00 59 59<br>dujardinautomobile@gmail.com</p>
+        </div>
+        <div class="i-box">
+          <div class="i-lbl">Client</div>
+          <div class="i-client-grid">${clientEntries}</div>
+        </div>
+      </div>
+      <div class="i-grid-2">
+        <div class="i-box">
+          <h3>Véhicule commandé</h3>
+          ${vehSplit || `<table class="i-vtbl">${vehRows}</table>`}
+          ${vehFlags ? `<div class="i-mini i-status"><strong>Statut :</strong> ${escapeHtml(vehFlags)}</div>` : ''}
+        </div>
+        ${deliveryRows || document.getElementById('bc_delivery_options').value ? `<div class="i-box"><h3>Livraison et garantie</h3>${deliverySplit || (deliveryRows ? `<table class="i-vtbl">${deliveryRows}</table>` : '')}${document.getElementById('bc_delivery_options').value ? `<div class="i-mini"><strong>Options livraison :</strong> ${escapeHtml(document.getElementById('bc_delivery_options').value)}</div>` : ''}</div>` : ''}
+      </div>
+      ${optionsBlock || repriseBlock ? `<div class="i-grid-2">${optionsBlock}${repriseBlock}</div>` : ''}
+      <div class="i-finance-grid">
+        <div class="i-box">
+          <h3>Détail financier</h3>
+          <table class="i-tbl">
+            <thead><tr><th>Détail</th><th class="r">Montant</th></tr></thead>
+            <tbody>${financialRows}</tbody>
+          </table>
+        </div>
+        <div class="i-sidebox">
+          <h3>Règlement</h3>
+          ${paymentRows ? `<table class="i-vtbl">${paymentRows}</table>` : ''}
+          <div class="i-total-due"><span class="label">Solde dû</span><span class="value">${fmt(prixSolde)}</span></div>
+        </div>
+      </div>
+      <div class="signatures">
+        <div class="sig-box buyer"><h4>L'acheteur</h4><div class="buyer-declare">L'acheteur déclare avoir pris connaissance des conditions de vente et valide le véhicule commandé.</div><div class="sig-line">Lu et approuvé</div></div>
+        <div class="sig-box"><h4>Le vendeur</h4><div class="sig-line">Lu et approuvé</div></div>
+      </div>
+      <div class="i-footer">Fait à ${escapeHtml(document.getElementById('bc_signed_place').value || 'Toufflers')} le ${escapeHtml(bcDate)}<br>Dujardin Automobile - SIRET : 832 028 773 00063</div>
+    </div>
+  `;
+  document.getElementById('documentPages').innerHTML = html;
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('printView').classList.add('active');
+  document.getElementById('outputHint').classList.remove('active');
+  window.scrollTo(0, 0);
+}
+function goBack() {
+  document.getElementById('formView').style.display = 'block';
+  document.getElementById('printView').classList.remove('active');
+  document.getElementById('outputHint').classList.remove('active');
+  window.scrollTo(0, 0);
+}
+function openOutput(mode) {
+  const hint = document.getElementById('outputHint');
+  hint.textContent = mode === 'pdf'
+    ? 'Dans la fenêtre suivante, choisissez "Enregistrer au format PDF" comme destination.'
+    : 'Dans la fenêtre suivante, choisissez votre imprimante papier.';
+  hint.classList.add('active');
+  window.print();
+}
+calculateTotals();
+</script>
+</body>
+</html>

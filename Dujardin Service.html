@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accueil Dujardin Services</title>
+<link rel="icon" type="image/png" sizes="16x16" href="logo_dujardin_fondblanc.png">
+<link rel="icon" type="image/png" sizes="32x32" href="logo_dujardin_fondblanc.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #f5f1eb;
+    --panel: rgba(255, 255, 255, 0.9);
+    --panel-strong: #ffffff;
+    --panel-soft: #faf6f1;
+    --text: #171717;
+    --muted: #736b63;
+    --line: #e5ddd4;
+    --accent: #c0392b;
+    --accent-dark: #992d22;
+    --shadow: 0 28px 60px rgba(23, 23, 23, 0.1);
+    --shadow-soft: 0 14px 34px rgba(23, 23, 23, 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 0% 0%, rgba(192, 57, 43, 0.12), transparent 28%),
+      radial-gradient(circle at 100% 100%, rgba(23, 23, 23, 0.08), transparent 24%),
+      linear-gradient(180deg, #faf7f3 0%, var(--bg) 100%);
+  }
+
+  .login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 460px;
+    padding: 34px 32px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(229, 221, 212, 0.92);
+    box-shadow: var(--shadow);
+  }
+
+  .login-brand {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+
+  .login-brand img {
+    width: 120px;
+    height: auto;
+    display: block;
+    margin: 0 auto 14px;
+  }
+
+  .login-brand small {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .login-brand h1 {
+    margin-top: 8px;
+    font-size: 34px;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .login-brand p {
+    margin-top: 12px;
+    color: #5b534c;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .login-field {
+    margin-bottom: 14px;
+  }
+
+  .login-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8a8178;
+  }
+
+  .login-field input {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .login-field input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .login-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 14px;
+    background: var(--text);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .login-submit:hover {
+    background: #2c2c2c;
+  }
+
+  .login-error {
+    min-height: 22px;
+    margin-top: 10px;
+    color: var(--accent);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .page-shell[hidden],
+  .login-screen[hidden] {
+    display: none !important;
+  }
+
+  .page {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 28px 22px 56px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+    padding: 16px 20px;
+    border: 1px solid rgba(229, 221, 212, 0.9);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .topbar-brand img {
+    width: 72px;
+    height: auto;
+    display: block;
+  }
+
+  .topbar-copy small {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .topbar-copy strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 20px;
+    letter-spacing: -0.4px;
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logout-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: #4f4942;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .logout-btn:hover {
+    background: #f6f1eb;
+  }
+
+  .hero {
+    margin-bottom: 24px;
+  }
+
+  .hero-main,
+  .tool-card,
+  .bottom-panel {
+    background: var(--panel);
+    border: 1px solid rgba(229, 221, 212, 0.92);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  .hero-main {
+    padding: 34px 34px 32px;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .hero-main::after {
+    content: '';
+    position: absolute;
+    inset: auto -60px -60px auto;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(192, 57, 43, 0.16), transparent 68%);
+    pointer-events: none;
+  }
+
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .hero-main h1 {
+    max-width: 720px;
+    font-size: clamp(38px, 5vw, 60px);
+    line-height: 0.98;
+    letter-spacing: -2px;
+    margin-bottom: 18px;
+  }
+
+  .hero-main p {
+    max-width: 650px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #4e473f;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .hero-stamp {
+    min-width: 0;
+    min-height: 180px;
+    padding: 20px 22px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #1b1b1b, #2d2d2d);
+    color: #fff;
+    box-shadow: 0 18px 28px rgba(23, 23, 23, 0.16);
+  }
+
+  .hero-stamp small {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 8px;
+  }
+
+  .hero-stamp strong {
+    display: block;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .hero-stamp p {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.82);
+  }
+
+  .hero-contact {
+    min-height: 180px;
+    padding: 22px 24px;
+    border-radius: 18px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.96), rgba(249, 243, 236, 0.96));
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .hero-contact strong {
+    display: block;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .hero-contact div {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .hero-contact .contact-line {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .hero-contact .contact-line + .contact-line {
+    margin-top: 6px;
+  }
+
+  .hero-contact .contact-label {
+    font-weight: 700;
+    color: #5b534c;
+  }
+
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .tool-card {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card::after {
+    content: '';
+    position: absolute;
+    right: -38px;
+    bottom: -38px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(192, 57, 43, 0.11), transparent 70%);
+    pointer-events: none;
+  }
+
+  .tool-card .eyebrow {
+    font-size: 12px;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .tool-card h3 {
+    font-size: 30px;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    letter-spacing: -1px;
+  }
+
+  .tool-card p {
+    color: #564f48;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    min-height: 108px;
+  }
+
+  .tool-points {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 24px;
+    min-height: 170px;
+    align-content: start;
+  }
+
+  .tool-points div {
+    padding: 12px 13px;
+    border-radius: 12px;
+    background: var(--panel-soft);
+    border: 1px solid var(--line);
+    font-size: 14px;
+    color: #524b44;
+  }
+
+  .tool-link-wrap {
+    margin-top: auto;
+    padding-top: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tool-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: var(--text);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 12px 24px rgba(23, 23, 23, 0.12);
+  }
+
+  .tool-link:hover {
+    background: #2d2d2d;
+    transform: translateY(-1px);
+  }
+
+  .tool-link.alt {
+    background: var(--accent);
+    box-shadow: 0 12px 24px rgba(192, 57, 43, 0.18);
+  }
+
+  .tool-link.alt:hover {
+    background: var(--accent-dark);
+  }
+
+  .tool-card.soon {
+    background: linear-gradient(180deg, rgba(251, 247, 242, 0.96), rgba(244, 238, 231, 0.94));
+  }
+
+  .tool-card.soon .eyebrow {
+    color: #857d74;
+  }
+
+  .tool-card.soon .tool-link {
+    background: #bdb4ab;
+    box-shadow: none;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  .tool-card h3 {
+    min-height: 66px;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .bottom-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: center;
+    padding: 22px 24px;
+  }
+
+  .bottom-panel h2 {
+    font-size: 14px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .bottom-panel p {
+    color: #5c554e;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .bottom-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: var(--panel-soft);
+    color: #4f4942;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .footer-note {
+    margin-top: 28px;
+    text-align: center;
+    color: #7d766e;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid,
+    .tools,
+    .bottom-panel {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      padding: 22px 14px 34px;
+    }
+
+    .hero-main,
+    .tool-card {
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .topbar {
+      padding: 14px 16px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .topbar-note {
+      text-align: left;
+    }
+
+    .topbar-brand img {
+      width: 60px;
+    }
+
+    .tool-link {
+      width: 100%;
+    }
+
+    .tool-card p,
+    .tool-points,
+    .tool-card h3 {
+      min-height: 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="login-screen" id="loginScreen">
+    <form class="login-card" id="loginForm">
+      <div class="login-brand">
+        <img src="logo_dujardin.png" alt="Dujardin Services">
+        <small>Accès interne</small>
+        <h1>Dujardin Services</h1>
+        <p>Connexion réservée au personnel de l’entreprise.</p>
+      </div>
+
+      <div class="login-field">
+        <label for="loginUser">Identifiant</label>
+        <input id="loginUser" type="text" autocomplete="username" placeholder="Identifiant">
+      </div>
+
+      <div class="login-field">
+        <label for="loginPass">Mot de passe</label>
+        <input id="loginPass" type="password" autocomplete="current-password" placeholder="Mot de passe">
+      </div>
+
+      <button class="login-submit" type="submit">Log in</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+
+  <main class="page page-shell" id="appShell" hidden>
+    <div class="topbar">
+      <div class="topbar-brand">
+        <img src="logo_dujardin.png" alt="Dujardin Services">
+        <div class="topbar-copy">
+          <small>Plateforme locale</small>
+          <strong>Dujardin Services</strong>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="logout-btn" type="button" id="logoutBtn">Déconnexion</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-main">
+        <div>
+          <div class="hero-kicker">Espace documentaire</div>
+          <h1>Dujardin Services réunit les outils documentaires internes de l’entreprise</h1>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-stamp">
+            <small>Usage entreprise</small>
+            <strong>Outils internes avec accès centralisé</strong>
+            <p>
+              Accédez rapidement aux outils utilisés par le personnel pour préparer les dossiers,
+              éditer les documents et gérer les réservations véhicule.
+            </p>
+          </div>
+          <div class="hero-contact">
+            <strong>Coordonnées</strong>
+            <div class="contact-line"><span class="contact-label">Atelier</span><span>40 Rue du Catillon, 59390 Toufflers</span></div>
+            <div class="contact-line"><span class="contact-label">Concession</span><span>13 Rue du Trieu du Quesnoy, 59390 Toufflers</span></div>
+            <div class="contact-line"><span class="contact-label">Téléphone</span><span>06 98 00 59 59</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tools">
+      <article class="tool-card">
+        <div class="eyebrow">Outil principal</div>
+        <h3>Dossier client</h3>
+        <p>
+          Préparez le dossier client complet utilisé par l’entreprise pour la vente,
+          avec les informations administratives et le document final à éditer.
+        </p>
+        <div class="tool-points">
+          <div>Document de vente interne</div>
+          <div>Informations client et véhicule</div>
+          <div>Sortie prête à imprimer</div>
+        </div>
+        <div class="tool-link-wrap">
+          <a class="tool-link" href="Generateur de Dossier Client.html">Ouvrir le dossier client</a>
+        </div>
+      </article>
+
+      <article class="tool-card">
+        <div class="eyebrow">Réservation</div>
+        <h3>Facture d’acompte</h3>
+        <p>
+          Générez la facture d’acompte utilisée en interne pour formaliser
+          la réservation d’un véhicule, sur une page unique prête pour le PDF.
+        </p>
+        <div class="tool-points">
+          <div>Réservation avec acompte</div>
+          <div>Reste à payer calculé automatiquement</div>
+          <div>Format A4 cohérent avec le reste</div>
+        </div>
+        <div class="tool-link-wrap">
+          <a class="tool-link alt" href="facture-acompte.html">Ouvrir la facture d’acompte</a>
+        </div>
+      </article>
+
+      <article class="tool-card">
+        <div class="eyebrow">Atelier</div>
+        <h3>Facturation atelier réparation</h3>
+        <p>
+          Générez la facture réparation utilisée en interne pour les interventions atelier,
+          avec prestations détaillées, calcul automatique et document final prêt à imprimer.
+        </p>
+        <div class="tool-points">
+          <div>Factures atelier</div>
+          <div>Main-d'œuvre, pièces et forfaits</div>
+          <div>Totaux et reste dû calculés</div>
+        </div>
+        <div class="tool-link-wrap">
+          <a class="tool-link" href="facture-reparation.html">Ouvrir la facture réparation</a>
+        </div>
+      </article>
+
+      <article class="tool-card">
+        <div class="eyebrow">Vente</div>
+        <h3>Bon de commande</h3>
+        <p>
+          Préparez le bon de commande digital à partir des informations de vente,
+          avec un formulaire détaillé et un document final prêt à imprimer.
+        </p>
+        <div class="tool-points">
+          <div>Acquéreur, vendeur et véhicule</div>
+          <div>Détail financier et conditions</div>
+          <div>Sortie imprimable sur deux pages</div>
+        </div>
+        <div class="tool-link-wrap">
+          <a class="tool-link alt" href="bon-commande.html">Ouvrir le bon de commande</a>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="bottom-panel">
+      <div>
+        <h2>Organisation</h2>
+        <p>
+          Les outils restent accessibles depuis une seule page d’entrée afin de simplifier
+          le travail du personnel et limiter les erreurs lors de la préparation documentaire.
+        </p>
+      </div>
+      <div class="bottom-chip">Dujardin Services • Accueil local</div>
+    </section>
+
+    <div class="footer-note">
+      Espace local interne de l’entreprise pour centraliser les outils de création documentaire.
+    </div>
+  </main>
+
+  <script>
+    const AUTH_KEY = 'dujardin_service_access';
+    const loginScreen = document.getElementById('loginScreen');
+    const appShell = document.getElementById('appShell');
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const loginUser = document.getElementById('loginUser');
+    const loginPass = document.getElementById('loginPass');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    function showApp() {
+      loginScreen.hidden = true;
+      appShell.hidden = false;
+    }
+
+    function showLogin() {
+      appShell.hidden = true;
+      loginScreen.hidden = false;
+      loginUser.focus();
+    }
+
+    if (sessionStorage.getItem(AUTH_KEY) === 'ok') {
+      showApp();
+    } else {
+      showLogin();
+    }
+
+    loginForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const user = loginUser.value.trim().toLowerCase();
+      const pass = loginPass.value.trim().toLowerCase();
+
+      if (user === 'dujardin' && pass === 'service') {
+        sessionStorage.setItem(AUTH_KEY, 'ok');
+        loginError.textContent = '';
+        showApp();
+        return;
+      }
+
+      loginError.textContent = 'Identifiant ou mot de passe incorrect.';
+      loginPass.value = '';
+      loginPass.focus();
+    });
+
+    logoutBtn.addEventListener('click', function() {
+      sessionStorage.removeItem(AUTH_KEY);
+      loginForm.reset();
+      loginError.textContent = '';
+      showLogin();
+    });
+  </script>
+</body>
+</html>

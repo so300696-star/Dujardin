@@ -1,0 +1,278 @@
+# instruction-facture-reparation.md
+
+## 🎯 Objectif
+
+Créer une nouvelle page web locale nommée `facture-reparation.html`, permettant de générer une facture de réparation véhicule (atelier).
+
+Cette page doit s’intégrer dans le mini logiciel existant et reprendre :
+
+* le design du générateur actuel
+* la logique formulaire → génération PDF
+* la structure A4 professionnelle
+
+Le rendu final doit être cohérent avec :
+
+* facture vente
+* facture acompte
+* générateur dossier client
+
+---
+
+## 🧱 Structure générale
+
+La page doit contenir :
+
+1. Une vue formulaire (saisie)
+2. Une vue impression (format A4)
+3. Un bouton “Générer facture”
+4. Un bouton “Retour modification”
+5. Un bouton “Imprimer / PDF”
+
+---
+
+## 📄 Sections du formulaire
+
+### 1. Informations facture
+
+Champs :
+
+* `f_num`
+* `f_date`
+* `f_pay` (Chèque / Virement)
+* `f_ref` (référence dossier ou ordre de réparation)
+
+---
+
+### 2. Client
+
+Champs :
+
+* `c_nom`
+* `c_prenom`
+* `c_addr`
+* `c_city`
+* `c_tel`
+
+---
+
+### 3. Véhicule
+
+Champs :
+
+* `v_marque`
+* `v_modele`
+* `v_immat`
+* `v_vin`
+* `v_km`
+* `v_mec`
+* `v_energie`
+
+---
+
+### 4. Détail des prestations (PARTIE PRINCIPALE)
+
+Créer un système de lignes dynamiques.
+
+Chaque ligne contient :
+
+* `designation` (ex : vidange, plaquettes, diagnostic)
+* `type` (pièce / main-d’œuvre / forfait)
+* `prix_ht`
+* `tva`
+* `prix_ttc`
+
+Fonctionnalités :
+
+* bouton “+ ajouter ligne”
+* bouton supprimer ligne
+* recalcul automatique TVA
+* recalcul dynamique des totaux
+
+---
+
+### 5. Totaux
+
+Champs calculés :
+
+* `total_ht`
+* `total_tva`
+* `total_ttc`
+* `montant_paye`
+* `reste_du`
+
+Règles :
+
+* total HT = somme des HT
+* TVA = somme TVA
+* TTC = somme TTC
+* reste = TTC - montant payé
+
+---
+
+### 6. Observations / Commentaires atelier (IMPORTANT)
+
+Créer une zone texte :
+
+Champ :
+
+* `t_obs`
+
+Objectif :
+Permettre au chef d’atelier ou technicien de rédiger :
+
+* détail des réparations effectuées
+* remarques techniques
+* anomalies détectées
+* recommandations client
+
+Contraintes :
+
+* textarea large
+* affichage clair dans le PDF
+* bloc visuellement séparé
+
+---
+
+## 🧾 Structure du PDF
+
+### En-tête
+
+* logo Dujardin Automobile
+* titre : **FACTURE RÉPARATION**
+* numéro facture
+
+---
+
+### Bloc informations
+
+* Garage (reprendre EXACTEMENT le générateur dossier client)
+* Client
+* Date
+* Mode paiement
+* Référence dossier
+
+---
+
+### Bloc véhicule
+
+* tableau structuré et lisible
+
+---
+
+### Tableau prestations
+
+Colonnes :
+
+* Désignation
+* Type
+* Prix HT
+* TVA
+* Prix TTC
+
+---
+
+### Bloc totaux
+
+Afficher clairement :
+
+* total HT
+* total TVA
+* total TTC (mis en avant)
+* montant payé
+* reste dû (très visible)
+
+---
+
+### Bloc observations (IMPORTANT)
+
+Titre :
+“Observations / Commentaires atelier”
+
+Affichage :
+
+* texte lisible
+* espacement suffisant
+* bloc distinct
+
+---
+
+### Pied de page
+
+⚠️ IMPORTANT :
+
+* reprendre EXACTEMENT celui du générateur dossier client
+* ne pas modifier
+* ne pas ajouter de gérants
+
+---
+
+## 🎨 Design
+
+Contraintes :
+
+* reprendre le CSS existant
+* même typographie
+* même structure A4
+* cohérence visuelle avec les autres documents
+
+---
+
+## ⚙️ Fonctionnement
+
+* bouton → génère la facture
+* bascule en vue impression
+* bouton retour
+* bouton impression PDF
+
+---
+
+## 🧪 Bonus (recommandé)
+
+Ajouter un bouton :
+“Remplir test réparation”
+
+Données :
+
+* client fictif
+* véhicule
+* 2 ou 3 prestations
+* observations atelier
+
+---
+
+## 🚫 Contraintes techniques importantes
+
+* ne pas modifier les autres pages existantes
+* créer un fichier indépendant
+* utiliser les mêmes conventions d’id
+* réutiliser le maximum de logique existante
+
+---
+
+## ⚠️ Contraintes de performance (IMPORTANT)
+
+L’agent doit travailler de manière optimisée :
+
+* ne pas réécrire tout le code inutilement
+* ne pas refaire une architecture complète
+* ne modifier que ce qui est nécessaire
+* éviter les longues explications inutiles
+* éviter toute duplication de code
+* ne pas ajouter de fonctionnalités non demandées
+* rester simple, clair et efficace
+
+Objectif :
+produire un résultat propre sans gaspillage de tokens.
+
+---
+
+## ✅ Résultat attendu
+
+Une page complète permettant de générer une facture de réparation professionnelle avec :
+
+* gestion des prestations
+* calcul automatique
+* observations atelier
+* rendu PDF propre et lisible
+
+Le tout cohérent avec le reste du mini logiciel garage.

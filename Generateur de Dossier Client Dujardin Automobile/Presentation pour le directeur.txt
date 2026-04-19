@@ -1,0 +1,21 @@
+Bonjour,
+
+Vous trouverez dans ce dossier le generateur de dossier client Dujardin Automobile.
+
+Cet outil permet, a partir d'une seule saisie, de generer automatiquement :
+- la facture
+- l'attestation d'entretien
+- le detail de garantie
+
+Le fonctionnement est simple :
+- ouverture du fichier HTML
+- remplissage du formulaire
+- generation du dossier complet
+- impression ou enregistrement en PDF
+
+L'outil est autonome et ne necessite pas d'installation particuliere.
+Il suffit de conserver dans le meme dossier :
+- le fichier Generateur de Dossier Client.html
+- le fichier logo_dujardin.png
+
+Cordialement

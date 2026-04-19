@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facture Réparation</title>
+<link rel="icon" type="image/png" sizes="16x16" href="logo_dujardin_fondblanc.png">
+<link rel="icon" type="image/png" sizes="32x32" href="logo_dujardin_fondblanc.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f0f0f0;
+    color: #1a1a1a;
+  }
+
+  .form-view {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+
+  .form-header { text-align: center; margin-bottom: 32px; }
+  .form-header .fh-logo { display: inline-block; }
+  .form-header .fh-logo img { max-width: 220px; height: auto; }
+  .form-header .fh-sub { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #1a1a1a; }
+  .form-header h2 { margin-top: 16px; font-size: 20px; font-weight: 700; }
+  .form-header p { font-size: 13px; color: #888; margin-top: 4px; }
+  .home-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #555;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .home-link:hover { background: #f5f5f5; color: #1a1a1a; }
+
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .card h3 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: #C0392B;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .row > * { flex: 1; }
+
+  label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #999;
+    margin-bottom: 4px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #1a1a1a;
+    background: #fafafa;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  input::placeholder, textarea::placeholder { color: #d8d8d8; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #C0392B; background: #fff; }
+  input.invalid { border-color: #C0392B; background: #fff0f0; }
+  textarea { resize: vertical; min-height: 120px; }
+
+  .invoice-number-field,
+  .unit-input-field {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background: #fafafa;
+    overflow: hidden;
+  }
+
+  .invoice-number-prefix {
+    padding: 9px 0 9px 12px;
+    font-size: 13px;
+    color: #1a1a1a;
+    white-space: nowrap;
+  }
+
+  .invoice-number-suffix {
+    border: none;
+    background: transparent;
+    padding-left: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .unit-input {
+    border: none;
+    background: transparent;
+  }
+
+  .unit-suffix {
+    padding: 9px 12px 9px 0;
+    font-size: 13px;
+    color: #8f8f8f;
+    white-space: nowrap;
+  }
+
+  .invoice-number-field:focus-within,
+  .unit-input-field:focus-within {
+    border-color: #C0392B;
+    background: #fff;
+  }
+
+  .immat-input { text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+
+  .repair-lines { display: flex; flex-direction: column; gap: 10px; }
+
+  .repair-line {
+    display: grid;
+    grid-template-columns: 2.2fr 1.2fr 1fr 1fr 1fr auto;
+    gap: 8px;
+    align-items: end;
+    padding: 12px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+  }
+
+  .repair-line-note {
+    grid-column: 3 / 6;
+    font-size: 11px;
+    color: #777;
+    margin-top: -2px;
+  }
+
+  .line-actions {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #f5f5f5;
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: #888;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  .btn-add:hover { background: #eee; color: #555; }
+
+  .btn-remove {
+    padding: 8px 10px;
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .btn-remove:hover { color: #C0392B; background: #fee; }
+
+  .totals-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .generate-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  .generate-btn:hover { background: #333; }
+
+  .print-view { display: none; }
+  .print-view.active { display: flex; flex-direction: column; align-items: center; padding: 20px 10px; }
+  #documentPages { width: 210mm; display: flex; flex-direction: column; gap: 14px; }
+
+  .toolbar { width: 210mm; display: flex; gap: 10px; margin-bottom: 14px; }
+  .toolbar button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .tb-print { background: #1a1a1a; color: #fff; flex: 1; }
+  .tb-print:hover { background: #333; }
+  .tb-pdf { background: #C0392B; color: #fff; flex: 1; }
+  .tb-pdf:hover { background: #a93226; }
+  .tb-back { background: #eee; color: #555; }
+  .tb-back:hover { background: #ddd; }
+  .tb-home { background: #f5f5f5; color: #555; }
+  .tb-home:hover { background: #e7e7e7; }
+  .output-hint {
+    width: 210mm;
+    margin: -4px 0 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #fff4e8;
+    border: 1px solid #f0d2b2;
+    color: #7a4b16;
+    font-size: 12px;
+    display: none;
+  }
+  .output-hint.active { display: block; }
+
+  @page { size: A4; margin: 0; }
+
+  .a4 {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    padding: 15mm 20mm 14mm 20mm;
+    position: relative;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.12);
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.45;
+    page-break-after: always;
+  }
+
+  .a4:last-child { page-break-after: auto; }
+
+  @media print {
+    html, body { width: 210mm; margin: 0; background: #fff; }
+    .form-view, .toolbar, .output-hint { display: none !important; }
+    .print-view { display: flex !important; padding: 0; width: 210mm; }
+    #documentPages { width: 210mm; }
+    .a4 { box-shadow: none; }
+    #documentPages { gap: 0; }
+  }
+
+  .i-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 10px;
+    border-bottom: 2.5px solid #1a1a1a;
+    margin-bottom: 10px;
+  }
+
+  .i-logo-img { display: flex; align-items: flex-start; margin-left: -10px; background: #fff; }
+  .i-logo-img img { max-width: 225px; width: 100%; height: auto; display: block; background: #fff; }
+
+  .i-title { text-align: right; }
+  .i-title h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+  .i-title .i-num { font-size: 10px; color: #777; margin-top: 1px; }
+
+  .i-info { display: flex; gap: 30px; margin-bottom: 12px; }
+  .i-info > div { flex: 1; }
+  .i-lbl { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.2px; color: #b0b0b0; margin-bottom: 4px; }
+  .i-info p { font-size: 11px; line-height: 1.55; color: #333; }
+  .i-info strong { font-weight: 600; color: #1a1a1a; }
+
+  .i-meta {
+    display: flex;
+    gap: 24px;
+    padding: 8px 0;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 12px;
+  }
+
+  .i-mi { display: flex; flex-direction: column; gap: 1px; }
+  .i-ml { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.8px; color: #b0b0b0; }
+  .i-mv { font-size: 11px; font-weight: 500; }
+
+  .i-veh {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    background: #fafafa;
+    border-left: 3px solid #C0392B;
+    border-radius: 3px;
+  }
+
+  .i-veh h3,
+  .i-note h3 {
+    font-size: 8.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.2px;
+    color: #b0b0b0;
+    margin-bottom: 6px;
+  }
+
+  .i-vtbl { width: 100%; border-collapse: collapse; }
+  .i-vtbl td { padding: 3px 5px; font-size: 10.5px; border-bottom: 1px solid #eee; }
+  .i-vtbl tr:last-child td { border-bottom: none; }
+  .i-vl { width: 130px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #aaa; }
+  .i-vv { font-weight: 500; color: #1a1a1a; }
+
+  .i-tbl { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  .i-tbl thead th {
+    font-size: 8.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: #b0b0b0;
+    padding: 7px 5px;
+    border-bottom: 2px solid #1a1a1a;
+    text-align: left;
+  }
+
+  .i-tbl thead th.r,
+  .i-tbl tbody td.r { text-align: right; }
+  .i-tbl thead th.c,
+  .i-tbl tbody td.c { text-align: center; }
+  .i-tbl tbody td { font-size: 10.5px; padding: 7px 5px; border-bottom: 1px solid #eee; color: #333; vertical-align: top; }
+
+  .i-totals {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+  }
+
+  .i-tbox {
+    width: 280px;
+    padding: 10px 12px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 4px;
+  }
+
+  .i-tl {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 11px;
+    color: #555;
+  }
+
+  .i-tl.grand {
+    border-top: 2.5px solid #1a1a1a;
+    margin-top: 4px;
+    padding-top: 7px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #1a1a1a;
+  }
+
+  .i-note {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 4px;
+  }
+
+  .i-note p {
+    font-size: 10.5px;
+    color: #444;
+    line-height: 1.65;
+    white-space: pre-line;
+  }
+
+  .toggle-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #444;
+  }
+
+  .toggle-line input {
+    width: auto;
+    margin: 0;
+  }
+
+  .i-footer {
+    position: absolute;
+    bottom: 7mm;
+    left: 20mm;
+    right: 20mm;
+    text-align: center;
+    font-size: 8px;
+    color: #b0b0b0;
+    line-height: 1.65;
+    border-top: 1px solid #eee;
+    padding-top: 7px;
+  }
+
+  .i-footer strong { color: #888; font-weight: 500; }
+
+  .i-title .i-num { color: #2f2f2f; }
+  .i-lbl,
+  .i-ml,
+  .i-veh h3,
+  .i-note h3,
+  .sig-box h4,
+  .i-tbl thead th,
+  .i-vl { color: #555; }
+  .i-info p,
+  .i-mv,
+  .i-vtbl td,
+  .i-tbl tbody td,
+  .i-note p,
+  .sig-line { color: #111; }
+  .i-info strong,
+  .i-vv,
+  .i-tl.grand { color: #111; }
+  .i-tl { color: #222; }
+  .i-footer,
+  .i-footer strong { color: #444; }
+  .sig-line { border-top-color: #777; }
+
+  @media screen and (max-width: 760px) {
+    .row,
+    .i-info,
+    .i-meta,
+    .totals-grid,
+    .repair-line {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolbar,
+    #documentPages,
+    .a4 { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="form-view" id="formView">
+  <div class="form-header">
+    <div class="fh-logo"><img src="logo_dujardin.png" alt="Dujardin Automobile"></div>
+    <div class="fh-sub">Automobile</div>
+    <h2>Générateur de Facture Réparation</h2>
+    <p>Préparez la facture atelier et générez un document A4 cohérent</p>
+    <a class="home-link" href="Dujardin Service.html">Retour à Dujardin Services</a>
+  </div>
+
+  <div class="card">
+    <h3>Informations facture</h3>
+    <div class="row">
+      <div>
+        <label>N° Facture</label>
+        <div class="invoice-number-field">
+          <span class="invoice-number-prefix">FA-2026-</span>
+          <input id="f_num_suffix" class="invoice-number-suffix" maxlength="4" placeholder="XXXX" oninput="formatInvoiceSuffix(this)">
+        </div>
+      </div>
+      <div><label>Date d'émission</label><input id="f_date" type="date"></div>
+    </div>
+    <div class="row">
+      <div><label>TVA récupérable ?</label>
+        <select id="vat_recoverable" onchange="toggleVatRecoverable()">
+          <option>Non</option>
+          <option>Oui</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div><label>Mode de paiement</label>
+        <select id="f_pay">
+          <option>Carte bancaire</option>
+          <option>Espèce</option>
+          <option>Chèque</option>
+        </select>
+      </div>
+      <div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Client</h3>
+    <div class="row">
+      <div><label>Nom</label><input id="c_nom" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+      <div><label>Prénom</label><input id="c_prenom" oninput="formatUppercase(this)" style="text-transform: uppercase;"></div>
+    </div>
+    <div class="row">
+      <div><label>Adresse</label><input id="c_addr"></div>
+      <div><label>Code postal & Ville</label><input id="c_city"></div>
+    </div>
+    <div class="row">
+      <div><label>Téléphone</label><input id="c_tel" placeholder="06 12 34 56 78" maxlength="14" oninput="formatPhone(this)"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Véhicule</h3>
+    <div class="row">
+      <div><label>Marque</label><input id="v_marque"></div>
+      <div><label>Modèle</label><input id="v_modele"></div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Immatriculation</label>
+        <input id="v_immat" class="immat-input" placeholder="AA-123-BB" maxlength="9" oninput="formatImmat(this)">
+      </div>
+      <div><label>N° VIN</label><input id="v_vin" maxlength="17" oninput="formatVin(this)"></div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Kilométrage</label>
+        <div class="unit-input-field">
+          <input id="v_km" class="unit-input" inputmode="numeric" oninput="formatMileage(this)">
+          <span class="unit-suffix">km</span>
+        </div>
+      </div>
+      <div><label>Mise en circulation</label><input id="v_mec" placeholder="JJ/MM/AAAA" maxlength="10" oninput="formatDate(this)"></div>
+    </div>
+    <div class="row">
+      <div><label>Énergie</label>
+        <select id="v_energie">
+          <option>Diesel</option>
+          <option>Essence</option>
+          <option>Hybride</option>
+          <option>Électrique</option>
+          <option>GPL</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Détail des prestations</h3>
+    <div class="repair-lines" id="repairLines"></div>
+    <button class="btn-add" type="button" onclick="addRepairLine()">+ ajouter ligne</button>
+  </div>
+
+  <div class="card">
+    <h3>Totaux</h3>
+    <div class="totals-grid">
+      <div><label>Total HT (€)</label><input id="total_ht" readonly></div>
+      <div><label>Total TVA (€)</label><input id="total_tva" readonly></div>
+      <div><label>Total TTC (€)</label><input id="total_ttc" readonly></div>
+      <div><label>Montant total (€)</label><input id="montant_total" readonly></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Observations / Commentaires atelier</h3>
+    <label class="toggle-line"><input id="obs_enabled" type="checkbox"> Afficher les observations sur la facture</label>
+    <textarea id="t_obs" placeholder="Détail des réparations effectuées, remarques techniques, anomalies détectées, recommandations client..."></textarea>
+  </div>
+
+  <button class="btn-add" type="button" onclick="remplirTest()">Remplir test réparation</button>
+  <button class="generate-btn" type="button" onclick="generate()">Générer la facture</button>
+</div>
+
+<div class="print-view" id="printView">
+  <div class="toolbar">
+    <button class="tb-home" onclick="window.location.href='Dujardin Service.html'">Accueil Dujardin Services</button>
+    <button class="tb-back" onclick="goBack()">Retour modification</button>
+    <button class="tb-print" onclick="openOutput('print')">Imprimer</button>
+    <button class="tb-pdf" onclick="openOutput('pdf')">Enregistrer en PDF</button>
+  </div>
+  <div class="output-hint" id="outputHint"></div>
+  <div id="documentPages"></div>
+</div>
+
+<script>
+const TVA_RATE = 0.20;
+
+function formatImmat(input) {
+  let v = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  let result = '';
+  for (let i = 0; i < v.length && i < 7; i++) {
+    if (i === 2 || i === 5) result += '-';
+    result += v[i];
+  }
+  input.value = result;
+}
+
+function formatPhone(input) {
+  let digits = input.value.replace(/\D/g, '').slice(0, 10);
+  input.value = digits.replace(/(\d{2})(?=\d)/g, '$1 ');
+}
+
+function formatVin(input) {
+  let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 17);
+  input.value = value;
+  input.classList.toggle('invalid', value.length !== 17);
+}
+
+function formatDate(input) {
+  let digits = input.value.replace(/\D/g, '').slice(0, 8);
+  if (digits.length <= 2) {
+    input.value = digits;
+  } else if (digits.length <= 4) {
+    input.value = digits.slice(0, 2) + '/' + digits.slice(2);
+  } else {
+    input.value = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+  }
+}
+
+function formatUppercase(input) {
+  input.value = input.value.toUpperCase();
+}
+
+function formatInvoiceSuffix(input) {
+  input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+}
+
+function formatMileage(input) {
+  input.value = input.value.replace(/\D/g, '');
+}
+
+function parseAmount(value) {
+  return parseFloat(String(value || '').replace(',', '.')) || 0;
+}
+
+function formatAmountInput(input, value) {
+  input.value = value ? value.toFixed(2) : '';
+}
+
+function isVatRecoverable() {
+  return document.getElementById('vat_recoverable').value === 'Oui';
+}
+
+function toggleVatRecoverable() {
+  document.querySelectorAll('.repair-line').forEach(row => updateRepairLine(row, 'toggle'));
+}
+
+function fmt(n) {
+  return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+
+function fmtDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function fmtKm(value) {
+  const digits = String(value || '').replace(/\D/g, '');
+  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' km' : '';
+}
+
+function addRepairLine(values = {}) {
+  const row = document.createElement('div');
+  row.className = 'repair-line';
+  row.innerHTML = `
+    <div>
+      <label>Désignation</label>
+      <input class="l-des" value="${values.designation || ''}" placeholder="Ex : vidange moteur">
+    </div>
+    <div>
+      <label>Type</label>
+      <select class="l-type">
+        <option ${values.type === 'Pièce' ? 'selected' : ''}>Pièce</option>
+        <option ${values.type === 'Main-d’œuvre' ? 'selected' : ''}>Main-d’œuvre</option>
+        <option ${values.type === 'Forfait' ? 'selected' : ''}>Forfait</option>
+      </select>
+    </div>
+    <div>
+      <label>Prix HT (€)</label>
+      <input class="l-ht" type="number" step="0.01" readonly>
+    </div>
+    <div>
+      <label>TVA (€)</label>
+      <input class="l-tva" type="number" step="0.01" readonly>
+    </div>
+    <div>
+      <label>Prix TTC (€)</label>
+      <input class="l-ttc" type="number" step="0.01" placeholder="Entrer le montant TTC">
+    </div>
+    <div class="line-actions">
+      <button class="btn-remove" type="button" onclick="removeRepairLine(this)">×</button>
+    </div>
+    <div class="repair-line-note">Entrer le montant TTC, la TVA et le prix HT sont calculés automatiquement.</div>
+  `;
+
+  document.getElementById('repairLines').appendChild(row);
+
+  const htInput = row.querySelector('.l-ht');
+  const ttcInput = row.querySelector('.l-ttc');
+  ttcInput.addEventListener('input', () => updateRepairLine(row, 'ttc'));
+  ttcInput.addEventListener('blur', () => formatAmountInput(ttcInput, parseAmount(ttcInput.value)));
+
+  if (values.ttc !== undefined) {
+    ttcInput.value = values.ttc;
+    updateRepairLine(row, 'ttc');
+  } else if (values.ht !== undefined) {
+    ttcInput.value = (parseAmount(values.ht) * (1 + TVA_RATE)).toFixed(2);
+    updateRepairLine(row, 'ttc');
+  } else {
+    calculateTotals();
+  }
+}
+
+function removeRepairLine(button) {
+  const lines = document.querySelectorAll('.repair-line');
+  if (lines.length === 1) {
+    const row = lines[0];
+    row.querySelectorAll('input').forEach(input => input.value = '');
+    row.querySelector('.l-type').selectedIndex = 0;
+    calculateTotals();
+    return;
+  }
+  button.closest('.repair-line').remove();
+  calculateTotals();
+}
+
+function updateRepairLine(row, source) {
+  const htInput = row.querySelector('.l-ht');
+  const tvaInput = row.querySelector('.l-tva');
+  const ttcInput = row.querySelector('.l-ttc');
+
+  let ttc = parseAmount(ttcInput.value);
+  const vatRecoverable = isVatRecoverable();
+  let ht = vatRecoverable ? (ttc / (1 + TVA_RATE)) : ttc;
+  const tva = vatRecoverable ? (ttc - ht) : 0;
+  formatAmountInput(htInput, ht);
+  formatAmountInput(tvaInput, tva);
+  if (source !== 'ttc') {
+    formatAmountInput(ttcInput, ttc);
+  }
+  calculateTotals();
+}
+
+function calculateTotals() {
+  let totalHt = 0;
+  let totalTva = 0;
+  let totalTtc = 0;
+  const vatRecoverable = isVatRecoverable();
+
+  document.querySelectorAll('.repair-line').forEach(row => {
+    totalHt += parseAmount(row.querySelector('.l-ht').value);
+    totalTva += parseAmount(row.querySelector('.l-tva').value);
+    totalTtc += parseAmount(row.querySelector('.l-ttc').value);
+  });
+
+  formatAmountInput(document.getElementById('total_ht'), totalHt);
+  formatAmountInput(document.getElementById('total_tva'), totalTva);
+  formatAmountInput(document.getElementById('total_ttc'), totalTtc);
+  formatAmountInput(document.getElementById('montant_total'), vatRecoverable ? totalHt : totalTtc);
+}
+
+function remplirTest() {
+  document.getElementById('f_num_suffix').value = 'R001';
+  formatInvoiceSuffix(document.getElementById('f_num_suffix'));
+  document.getElementById('f_date').value = '2026-04-17';
+  document.getElementById('vat_recoverable').value = 'Non';
+  document.getElementById('f_pay').value = 'Chèque';
+  document.getElementById('c_nom').value = 'Lefebvre';
+  formatUppercase(document.getElementById('c_nom'));
+  document.getElementById('c_prenom').value = 'Thomas';
+  formatUppercase(document.getElementById('c_prenom'));
+  document.getElementById('c_addr').value = '48 Rue de Roubaix';
+  document.getElementById('c_city').value = '59200 Tourcoing';
+  document.getElementById('c_tel').value = '0611223344';
+  formatPhone(document.getElementById('c_tel'));
+
+  document.getElementById('v_marque').value = 'Renault';
+  document.getElementById('v_modele').value = 'Scenic IV 1.7 Blue dCi';
+  document.getElementById('v_immat').value = 'FT592RL';
+  formatImmat(document.getElementById('v_immat'));
+  document.getElementById('v_vin').value = 'VF1RFA12365478901';
+  formatVin(document.getElementById('v_vin'));
+  document.getElementById('v_km').value = '138420';
+  formatMileage(document.getElementById('v_km'));
+  document.getElementById('v_mec').value = '18092019';
+  formatDate(document.getElementById('v_mec'));
+  document.getElementById('v_energie').value = 'Diesel';
+
+  document.getElementById('repairLines').innerHTML = '';
+  addRepairLine({ designation: 'Révision complète avec vidange moteur et remplacement des filtres', type: 'Forfait', ht: '189.00' });
+  addRepairLine({ designation: 'Turbo échange standard', type: 'Pièce', ht: '890.00' });
+  addRepairLine({ designation: 'Dépose / repose turbo et contrôle circuit admission', type: 'Main-d’œuvre', ht: '280.00' });
+
+  document.getElementById('obs_enabled').checked = true;
+  document.getElementById('t_obs').value = 'Révision effectuée avec remplacement du turbo. Essai routier réalisé après intervention, fonctionnement moteur conforme. Prévoir un contrôle du niveau d’huile après roulage.';
+  calculateTotals();
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function generate() {
+  const f_num = 'FA-2026-' + (document.getElementById('f_num_suffix').value || 'XXXX');
+  const f_date = fmtDate(document.getElementById('f_date').value);
+  const vatRecoverable = isVatRecoverable();
+  const f_pay = document.getElementById('f_pay').value;
+  const c_nom = document.getElementById('c_nom').value;
+  const c_prenom = document.getElementById('c_prenom').value;
+  const c_name = [c_nom, c_prenom].filter(Boolean).join(' ');
+  const c_addr = document.getElementById('c_addr').value;
+  const c_city = document.getElementById('c_city').value;
+  const c_tel = document.getElementById('c_tel').value;
+
+  const v = {};
+  ['marque','modele','immat','vin','km','mec','energie'].forEach(k => {
+    v[k] = document.getElementById('v_' + k).value;
+  });
+
+  const lines = Array.from(document.querySelectorAll('.repair-line')).map(row => ({
+    designation: row.querySelector('.l-des').value,
+    type: row.querySelector('.l-type').value,
+    ht: parseAmount(row.querySelector('.l-ht').value),
+    tva: parseAmount(row.querySelector('.l-tva').value),
+    ttc: parseAmount(row.querySelector('.l-ttc').value)
+  })).filter(line => line.designation || line.ht || line.ttc);
+
+  const totalHt = parseAmount(document.getElementById('total_ht').value);
+  const totalTva = parseAmount(document.getElementById('total_tva').value);
+  const totalTtc = parseAmount(document.getElementById('total_ttc').value);
+  const montantTotal = parseAmount(document.getElementById('montant_total').value);
+  const obs = document.getElementById('t_obs').value;
+  const showObs = document.getElementById('obs_enabled').checked && obs.trim();
+
+  const clientTel = c_tel ? `<br>Tél : ${escapeHtml(c_tel)}` : '';
+  const vehRows = [
+    ['Marque', v.marque],
+    ['Modèle', v.modele],
+    ['Immatriculation', v.immat],
+    ['N° VIN', v.vin],
+    ['Kilométrage', fmtKm(v.km)],
+    ['Mise en circulation', v.mec],
+    ['Énergie', v.energie]
+  ].filter(row => row[1]).map(row => `<tr><td class="i-vl">${row[0]}</td><td class="i-vv">${escapeHtml(row[1])}</td></tr>`).join('');
+
+  const prestationRows = lines.length
+    ? lines.map(line => `
+      <tr>
+        <td>${escapeHtml(line.designation)}</td>
+        <td class="c">${escapeHtml(line.type)}</td>
+        <td class="r">${fmt(line.ht)}</td>
+        <td class="r">${fmt(line.tva)}</td>
+        <td class="r">${fmt(line.ttc)}</td>
+      </tr>
+    `).join('')
+    : `
+      <tr>
+        <td colspan="5">Aucune prestation renseignée.</td>
+      </tr>
+    `;
+
+  const html = `
+    <div class="a4 facture-page">
+      <div class="i-header">
+        <div class="i-logo-img">
+          <img src="logo_dujardin.png" alt="Dujardin Automobile">
+        </div>
+        <div class="i-title">
+          <h1>FACTURE RÉPARATION</h1>
+          <div class="i-num">N° ${escapeHtml(f_num)}</div>
+        </div>
+      </div>
+
+      <div class="i-info">
+        <div>
+          <div class="i-lbl">Garage</div>
+          <p><strong>Dujardin Automobile</strong><br>40 Rue du Catillon<br>59390 Toufflers<br>09 50 45 90 83</p>
+        </div>
+        <div>
+          <div class="i-lbl">Client</div>
+          <p><strong>${escapeHtml(c_name)}</strong><br>${escapeHtml(c_addr)}<br>${escapeHtml(c_city)}${clientTel}</p>
+        </div>
+      </div>
+
+      <div class="i-meta">
+        <div class="i-mi"><span class="i-ml">Date d'émission</span><span class="i-mv">${escapeHtml(f_date)}</span></div>
+        <div class="i-mi"><span class="i-ml">TVA récupérable</span><span class="i-mv">${vatRecoverable ? 'Oui' : 'Non'}</span></div>
+      </div>
+
+      <div class="i-veh">
+        <h3>Véhicule</h3>
+        <table class="i-vtbl">${vehRows}</table>
+      </div>
+
+      <table class="i-tbl">
+        <thead>
+          <tr>
+            <th>Désignation</th>
+            <th class="c">Type</th>
+            <th class="r">Prix HT</th>
+            <th class="r">TVA</th>
+            <th class="r">Prix TTC</th>
+          </tr>
+        </thead>
+        <tbody>${prestationRows}</tbody>
+      </table>
+
+      <div class="i-totals">
+        <div class="i-tbox">
+          <div class="i-tl"><span>Total HT</span><span>${fmt(totalHt)}</span></div>
+          <div class="i-tl"><span>Total TVA</span><span>${fmt(totalTva)}</span></div>
+          <div class="i-tl"><span>Mode de paiement</span><span>${escapeHtml(f_pay)}</span></div>
+          <div class="i-tl grand"><span>${vatRecoverable ? 'Montant total HT' : 'Montant total TTC'}</span><span>${fmt(montantTotal || (vatRecoverable ? totalHt : totalTtc))}</span></div>
+        </div>
+      </div>
+
+      ${showObs ? `
+      <div class="i-note">
+        <h3>Observations / Commentaires atelier</h3>
+        <p>${escapeHtml(obs)}</p>
+      </div>
+      ` : ''}
+
+      <div class="i-footer">
+        <strong>Dujardin Automobile</strong> — SARL au capital de 20 000 € — 40 Rue du Catillon, 59390 Toufflers<br>
+        SIRET : 832 028 773 00055 — RCS Lille Métropole — N° TVA : FR83 832 028 773
+      </div>
+    </div>
+  `;
+
+  document.getElementById('documentPages').innerHTML = html;
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('printView').classList.add('active');
+  document.getElementById('outputHint').classList.remove('active');
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  document.getElementById('formView').style.display = 'block';
+  document.getElementById('printView').classList.remove('active');
+  document.getElementById('outputHint').classList.remove('active');
+  window.scrollTo(0, 0);
+}
+
+function openOutput(mode) {
+  const hint = document.getElementById('outputHint');
+  if (mode === 'pdf') {
+    hint.textContent = 'Dans la fenêtre suivante, choisissez "Enregistrer au format PDF" comme destination.';
+  } else {
+    hint.textContent = 'Dans la fenêtre suivante, choisissez votre imprimante papier.';
+  }
+  hint.classList.add('active');
+  window.print();
+}
+
+addRepairLine();
+calculateTotals();
+</script>
+</body>
+</html>
